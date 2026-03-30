@@ -1,0 +1,195 @@
+{% extends 'bankapp/base.html' %}
+
+{% block title %}PrairieWealth | Institutional Wealth Management{% endblock %}
+
+{% block extra_head %}
+<!-- Preload critical hero carousel images for instant loading -->
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=60&w=1600&auto=format&fit=crop">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=60&w=1600&auto=format&fit=crop">
+{% endblock %}
+
+{% block content %}
+<!-- Immersive Hero Section -->
+<section class="relative h-[100dvh] sm:min-h-[800px] overflow-hidden flex items-center -mt-32" id="hero-carousel">
+    <!-- Overlay Grid Texture -->
+    <div class="absolute inset-0 z-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiIvPjwvc3ZnPg==')] pointer-events-none"></div>
+
+    <!-- Carousel Slides -->
+    <div class="carousel-slide absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-100 z-[5]" data-index="0">
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transform scale-105" alt="Prairie Horizon">
+        <div class="absolute inset-0 bg-gradient-to-r from-[#07090e]/95 via-[#07090e]/70 to-transparent"></div>
+        
+        <div class="relative z-20 max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 w-full h-full flex flex-col justify-center">
+            <div class="max-w-3xl text-white pt-20">
+                <span class="inline-block py-1.5 px-4 rounded-full bg-green-500/10 text-green-400 mb-6 border border-green-500/20 text-[10px] font-bold tracking-[0.2em] uppercase backdrop-blur-md">Generational Wealth</span>
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] mb-6 tracking-tight font-heading">
+                    Design Your<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">Financial Future.</span>
+                </h1>
+                <p class="text-lg md:text-xl mb-10 font-medium text-gray-400 border-l-2 pl-6 max-w-xl border-green-500">
+                    PrairieWealth combines institutional security with elite digital banking infrastructure for your everyday wealth generation.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{% url 'register' %}" class="btn-primary flex items-center justify-center font-black py-4 px-10 rounded-xl text-xs uppercase tracking-[0.2em]">Open Portfolio</a>
+                    <a href="{% url 'about' %}" class="btn-outline flex items-center justify-center font-bold py-4 px-10 rounded-xl text-xs uppercase tracking-[0.2em]">Our Heritage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="carousel-slide absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0 z-[4]" data-index="1">
+        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover transform scale-105" alt="Corporate Architecture">
+        <div class="absolute inset-0 bg-gradient-to-r from-[#07090e]/95 via-[#07090e]/70 to-transparent"></div>
+        
+        <div class="relative z-20 max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 w-full h-full flex flex-col justify-center">
+            <div class="max-w-3xl text-white pt-20">
+                <span class="inline-block py-1.5 px-4 rounded-full bg-gold/10 text-gold mb-6 border border-gold/20 text-[10px] font-bold tracking-[0.2em] uppercase backdrop-blur-md">Enterprise Infrastructure</span>
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] mb-6 tracking-tight font-heading">
+                    Execute At<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-500">Global Scale.</span>
+                </h1>
+                <p class="text-lg md:text-xl mb-10 font-medium text-gray-400 border-l-2 pl-6 max-w-xl border-gold">
+                    Corporate treasury management and complex institutional capital structures simplified through our core.
+                </p>
+                <div class="flex gap-4">
+                    <a href="{% url 'business' %}" class="bg-gold text-black hover:bg-yellow-500 px-10 py-4 rounded-xl text-xs font-black uppercase tracking-[0.2em] transition-all">Explore Enterprise</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carousel Nav -->
+    <div class="absolute bottom-12 left-0 w-full z-30">
+        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 flex space-x-3">
+            <button class="carousel-dot block w-16 h-1 bg-green-500 rounded transition-all"></button>
+            <button class="carousel-dot block w-16 h-1 bg-white/20 rounded hover:bg-white/40 transition-all"></button>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slides = document.querySelectorAll('.carousel-slide');
+        const dots = document.querySelectorAll('.carousel-dot');
+        let currentSlide = 0;
+        let slideInterval;
+
+        function showSlide(index) {
+            slides.forEach(s => { s.classList.remove('opacity-100', 'z-[5]'); s.classList.add('opacity-0', 'z-[4]'); });
+            dots.forEach(d => { d.classList.remove('bg-green-500', 'bg-gold'); d.classList.add('bg-white/20'); });
+            
+            slides[index].classList.remove('opacity-0', 'z-[4]');
+            slides[index].classList.add('opacity-100', 'z-[5]');
+            
+            if(index === 0) dots[index].classList.replace('bg-white/20', 'bg-green-500');
+            if(index === 1) dots[index].classList.replace('bg-white/20', 'bg-gold');
+        }
+
+        function nextSlide() { showSlide(currentSlide = (currentSlide + 1) % slides.length); }
+        function resetSlideShow() { clearInterval(slideInterval); slideInterval = setInterval(nextSlide, 8000); }
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => { showSlide(currentSlide = index); resetSlideShow(); });
+        });
+        slideInterval = setInterval(nextSlide, 8000);
+    });
+</script>
+
+<!-- Metrics Section -->
+<section class="relative z-20 pb-16 pt-0 sm:pt-10 -mt-8 sm:-mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card rounded-[2rem] p-8 sm:p-12 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-white/10 bg-[#0B0F19]/90">
+            <div class="text-center group">
+                <h3 class="text-3xl sm:text-4xl font-black text-white group-hover:text-green-400 transition-colors font-heading">$150B<span class="text-green-500">+</span></h3>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-2 font-bold">Assets Managed</p>
+            </div>
+            <div class="text-center group">
+                <h3 class="text-3xl sm:text-4xl font-black text-white group-hover:text-green-400 transition-colors font-heading">2M<span class="text-green-500">+</span></h3>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-2 font-bold">Client Portfolios</p>
+            </div>
+            <div class="text-center group">
+                <h3 class="text-3xl sm:text-4xl font-black text-white group-hover:text-gold transition-colors font-heading">100<span class="text-gold">%</span></h3>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-2 font-bold">Uptime Protocol</p>
+            </div>
+            <div class="text-center group">
+                <h3 class="text-3xl sm:text-4xl font-black text-white group-hover:text-gold transition-colors font-heading">24<span class="text-gold">/</span>7</h3>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-2 font-bold">Global Support</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Solutions -->
+<section class="py-24 relative overflow-hidden">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/5 rounded-full blur-[150px] pointer-events-none"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16">
+            <span class="text-green-400 font-bold tracking-[0.2em] uppercase text-[10px]">Ecosystem Core</span>
+            <h2 class="text-3xl md:text-4xl font-black text-white mt-2 font-heading">Architected for Wealth Generation</h2>
+            <div class="w-16 h-1 bg-gradient-to-r from-green-400 to-transparent mx-auto mt-6 rounded-full"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Checking -->
+            <div class="glass-card rounded-[2rem] overflow-hidden group border border-white/5 hover:border-green-500/30 transition-all duration-500 relative flex flex-col">
+                <div class="h-56 overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-60">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--pw-card)] to-transparent"></div>
+                    <div class="absolute top-6 left-6 w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                        <svg class="w-6 h-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                    </div>
+                </div>
+                <div class="p-8 flex-1 flex flex-col justify-between -mt-6 relative z-10 bg-gradient-to-b from-transparent to-[#0B0F19]">
+                    <div>
+                        <h3 class="text-2xl font-black mb-3 text-white font-heading">Private Checking</h3>
+                        <p class="text-gray-400 mb-8 font-medium text-sm leading-relaxed">Limitless liquidity with zero artificial bounds. Experience seamless capital deployment with real-time global fraud analytics.</p>
+                    </div>
+                    <a href="{% url 'personal' %}" class="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-green-400 hover:text-green-300 transition-colors">
+                        Explore Liquidity <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Wealth Mgmt -->
+            <div class="glass-card rounded-[2rem] overflow-hidden group border border-gold/20 hover:border-gold/50 transition-all duration-500 relative flex flex-col bg-gradient-to-br from-[#0B0F19] to-[#07090E]">
+                <div class="h-56 overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-40 mix-blend-luminosity">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0B0F19] to-transparent"></div>
+                    <div class="absolute top-6 left-6 w-12 h-12 rounded-xl bg-gold/10 backdrop-blur-md flex items-center justify-center border border-gold/30">
+                        <svg class="w-6 h-6 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    </div>
+                    <div class="absolute top-6 right-6 px-3 py-1 bg-gold text-black text-[9px] font-black uppercase tracking-widest rounded-md">Premier</div>
+                </div>
+                <div class="p-8 flex-1 flex flex-col justify-between -mt-6 relative z-10 bg-gradient-to-b from-transparent to-[#0B0F19]">
+                    <div>
+                        <h3 class="text-2xl font-black mb-3 text-gold font-heading">Institutional Yield</h3>
+                        <p class="text-gray-400 mb-8 font-medium text-sm leading-relaxed">Direct access to private market allocations, sovereign bonds, and intelligent portfolio balancing engines.</p>
+                    </div>
+                    <a href="{% url 'personal' %}" class="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-gold hover:text-yellow-400 transition-colors">
+                        Secure Access <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Enterprise -->
+            <div class="glass-card rounded-[2rem] overflow-hidden group border border-white/5 hover:border-gray-400/30 transition-all duration-500 relative flex flex-col">
+                <div class="h-56 overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-50 grayscale">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--pw-card)] to-transparent"></div>
+                    <div class="absolute top-6 left-6 w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                </div>
+                <div class="p-8 flex-1 flex flex-col justify-between -mt-6 relative z-10 bg-gradient-to-b from-transparent to-[#0B0F19]">
+                    <div>
+                        <h3 class="text-2xl font-black mb-3 text-white font-heading">Enterprise Treasury</h3>
+                        <p class="text-gray-400 mb-8 font-medium text-sm leading-relaxed">Corporate liquidity structures, payroll execution APIs, and automated regulatory reporting logic.</p>
+                    </div>
+                    <a href="{% url 'business' %}" class="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-white hover:text-gray-300 transition-colors">
+                        Connect Enterprise <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7-7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

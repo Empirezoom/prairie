@@ -1,0 +1,60 @@
+{% extends 'bankapp/base.html' %}
+{% block title %}FDIC Compliance - PrairieWealth{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-4xl mx-auto px-4 sm:px-6 relative z-10 pb-24 pt-16">
+    <div class="mb-12 border-b border-white/10 pb-6 flex items-center gap-6">
+        <div class="w-16 h-16 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center font-black text-white text-xl shrink-0">
+            F
+        </div>
+        <div>
+            <h1 class="text-4xl sm:text-5xl font-black font-heading text-white tracking-tighter">FDIC <span class="text-gray-500 italic font-light tracking-wide">Shield</span></h1>
+            <p class="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-2">Federal Deposit Insurance Corporation standard.</p>
+        </div>
+    </div>
+    
+    <div class="glass-card rounded-[2rem] p-8 sm:p-12 border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        
+        <div class="space-y-12">
+            <div>
+                <h2 class="text-sm font-black text-white tracking-widest mb-4 uppercase">Federal Reserve Mandate</h2>
+                <p class="text-xs font-bold text-gray-400 leading-relaxed uppercase tracking-wider mb-4">
+                    The institutional tag <span class="text-white font-black">"MEMBER FDIC"</span> embedded in our architecture signifies total integration with the Federal Deposit Insurance Corporation, a sovereign US Congress agency engineered to maintain absolute kinetic stability in global markets.
+                </p>
+            </div>
+
+            <div class="bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-gold/10 via-black to-black p-8 rounded-2xl border border-gold/20 shadow-inner relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-gold/10 blur-[40px] rounded-full pointer-events-none"></div>
+                <h2 class="text-sm font-black text-gold tracking-widest mb-4 uppercase relative z-10">Total Insulation Limits</h2>
+                <p class="text-xs font-bold text-gray-400 leading-relaxed uppercase tracking-wider mb-6 relative z-10">
+                    The FDIC evaluates and secures financial topologies against systemic collapse. Because PrairieWealth acts as a Tier-1 FDIC node, <span class="text-white font-black border-b border-gold/50 pb-0.5">CAPITAL IS INSURED UP TO $250,000 PER NODE ENTITY</span>, per category.
+                </p>
+                <div class="grid grid-cols-2 gap-4 relative z-10">
+                    <div class="flex items-center space-x-2 text-[9px] font-black uppercase tracking-widest text-gold/70">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gold"></span> <span>Checking Ledgers</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-[9px] font-black uppercase tracking-widest text-gold/70">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gold"></span> <span>Savings Matrices</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-[9px] font-black uppercase tracking-widest text-gold/70">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gold"></span> <span>Money Market (MMDA)</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-[9px] font-black uppercase tracking-widest text-gold/70">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gold"></span> <span>Certificates (CDs)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-white/5 pt-8">
+                <div class="flex items-center space-x-4 mb-4 text-green-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-sm font-black tracking-widest uppercase">Zero Loss Guarantee</h2>
+                </div>
+                <p class="text-xs font-bold text-gray-500 leading-relaxed uppercase tracking-wider">
+                    Since the genesis of the FDIC proxy in 1933, no authorized node entity has ever permitted a single cent of insured capital to permanently evaporate.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

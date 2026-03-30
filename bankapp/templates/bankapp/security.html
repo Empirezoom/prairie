@@ -1,0 +1,80 @@
+{% extends 'bankapp/base.html' %}
+{% block title %}Security Center - PrairieWealth{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-5xl mx-auto px-4 sm:px-6 relative z-10 pb-24 pt-16">
+    <div class="mb-12 border-b border-white/10 pb-6 text-center">
+        <div class="inline-flex w-20 h-20 bg-green-500/10 rounded-3xl border border-green-500/30 items-center justify-center text-green-400 mb-6 shadow-[0_0_30px_rgba(0,230,118,0.2)]">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        </div>
+        <h1 class="text-4xl sm:text-6xl font-black font-heading text-white tracking-tighter">Security <span class="text-green-400 italic font-light tracking-wide">Command</span></h1>
+        <p class="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-4">Military-grade protection for sovereign capital nodes.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <div class="glass-card rounded-[2.5rem] p-8 sm:p-12 border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+            <h2 class="text-sm font-black text-white tracking-widest mb-8 uppercase border-l-2 border-green-500 pl-4">Network Defenses</h2>
+            
+            <div class="space-y-8">
+                <div>
+                    <div class="flex items-center space-x-3 text-green-400 mb-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <h3 class="text-xs font-black tracking-widest uppercase">AES-256 Encryption</h3>
+                    </div>
+                    <p class="text-[10px] sm:text-xs font-bold text-gray-400 leading-relaxed uppercase tracking-wider pl-8">
+                        Every kinetic action traversing the terminal is cryptographically scrambled, permanently locking out unauthorized node sniffers.
+                    </p>
+                </div>
+                
+                <div>
+                    <div class="flex items-center space-x-3 text-green-400 mb-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+                        <h3 class="text-xs font-black tracking-widest uppercase">Biometric MFA Layer</h3>
+                    </div>
+                    <p class="text-[10px] sm:text-xs font-bold text-gray-400 leading-relaxed uppercase tracking-wider pl-8">
+                        Device origin is verified prior to session initiation. Anomalies prompt an immediate multi-factor authentication lock.
+                    </p>
+                </div>
+
+                <div>
+                    <div class="flex items-center space-x-3 text-red-500 mb-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        <h3 class="text-xs font-black tracking-widest uppercase text-white">24/7 AI Watchdog</h3>
+                    </div>
+                    <p class="text-[10px] sm:text-xs font-bold text-gray-400 leading-relaxed uppercase tracking-wider pl-8">
+                        Machine learning systems patrol the overarching ledger continuously. Anomalous outflow flags an immediate suspension of capital transmission.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-[2.5rem] p-8 sm:p-12 border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-white/[0.02]">
+            <h2 class="text-sm font-black text-white tracking-widest mb-8 uppercase border-l-2 border-gold pl-4">User Directives</h2>
+            <p class="text-[10px] font-black text-gold uppercase tracking-[0.3em] mb-6">Security is a synchronized effort. Establish local defenses.</p>
+            
+            <div class="space-y-6">
+                <div class="bg-black/40 p-5 rounded-2xl border border-white/5 shadow-inner">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-loose">
+                        <span class="text-white font-black">1. Strict Isolation:</span> Do not broadcast hash phrases. PrairieWealth logic will NEVER command password provision via email or audio relay.
+                    </p>
+                </div>
+                <div class="bg-black/40 p-5 rounded-2xl border border-white/5 shadow-inner">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-loose">
+                        <span class="text-white font-black">2. Alphanumeric Complexity:</span> Generate a terminal password with massive entropy.
+                    </p>
+                </div>
+                <div class="bg-black/40 p-5 rounded-2xl border border-white/5 shadow-inner">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-loose">
+                        <span class="text-white font-black">3. Node Upgrades:</span> Maintain local antivirus matrices and keep endpoint OS instances fully patched.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-white/5 text-center">
+                <p class="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em]">Contact Node Vector immediately for suspected breaches.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

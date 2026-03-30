@@ -1,0 +1,202 @@
+{% extends 'bankapp/base.html' %}
+{% block title %}Audit Ledger | PrairieWealth Infrastructure{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10 pb-24">
+    
+    <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-10">
+        <div>
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="w-12 h-[1px] bg-green-500/30"></span>
+                <span class="text-green-400 font-black text-[10px] uppercase tracking-[0.5em]">Immutable Ledger Access</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-heading font-black text-white tracking-tighter">
+                Audit <span class="text-green-500 italic font-light tracking-widest">Ledger</span>
+            </h1>
+            <p class="text-gray-500 font-bold mt-2 text-[11px] uppercase tracking-[0.3em]">Historical Analysis of Portfolio Operations</p>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-4">
+            <a href="{% url 'transfer' %}" class="btn-primary px-8 py-4 text-[10px] uppercase tracking-[0.2em] shadow-2xl flex items-center">
+                New Action <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+            </a>
+            <button class="btn-outline px-6 py-4 text-[10px] uppercase font-black tracking-widest bg-white/5">
+                Export Matrix
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Container Layout -->
+    <div class="glass-card rounded-[2.5rem] overflow-hidden border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        
+        <!-- Search and Filter Bar -->
+        <div class="p-8 sm:p-10 border-b border-white/5 bg-white/[0.01] flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div class="flex items-center space-x-3">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(0,255,153,0.8)]"></span>
+                <h3 class="font-black text-[10px] uppercase tracking-[0.4em] text-gray-500">Live Infrastructure Feed</h3>
+            </div>
+            <div class="relative w-full md:w-96">
+                <input type="text" placeholder="QUERY PARAMETERS..." class="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-[11px] text-white placeholder-gray-600 focus:outline-none focus:border-green-500 transition-all font-black tracking-widest uppercase">
+                <svg class="w-4 h-4 text-gray-600 absolute left-5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+        </div>
+        
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto w-full scrollbar-visible">
+            <table class="w-full text-left border-collapse whitespace-nowrap">
+                <thead>
+                    <tr class="bg-black/40 text-[9px] font-black uppercase tracking-[0.4em] text-gray-500 border-b border-white/5">
+                        <th class="px-8 py-6">Timeline Vector</th>
+                        <th class="px-8 py-6">Classification</th>
+                        <th class="px-8 py-6">Operation Details</th>
+                        <th class="px-8 py-6 text-right">Sum (USD)</th>
+                        <th class="px-8 py-6 text-center">Protocol Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    {% for t in transfers %}
+                    <tr class="hover:bg-white/[0.03] transition-all group cursor-pointer" onclick="window.location='{% url 'transaction_detail' t.pk %}'">
+                        <td class="px-8 py-6">
+                            <div class="font-black text-white text-sm tracking-wide group-hover:text-green-400 transition-colors">{{ t.timestamp|date:"M d, Y" }}</div>
+                            <div class="text-[9px] text-gray-500 font-black uppercase tracking-[0.2em] mt-1">{{ t.timestamp|time:"H:i:s" }} UTC</div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4 bg-black/50 border border-white/5 shadow-inner transition-transform group-hover:scale-110 overflow-hidden text-center
+                                    {% if t.transaction_type == 'Deposit' %}text-green-400 border-green-500/20 bg-green-500/5{% else %}text-white{% endif %}">
+                                    {% if user.userprofile.profile_picture %}
+                                        <div class="w-full h-full relative">
+                                            <img src="{{ user.userprofile.profile_picture.url }}" class="w-full h-full object-cover">
+                                            {% if t.transaction_type == 'Deposit' %}
+                                            <div class="absolute inset-0 bg-green-500/20 flex items-center justify-center backdrop-blur-[1px]">
+                                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                            </div>
+                                            {% else %}
+                                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[1px]">
+                                                <svg class="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        {% if t.transaction_type == 'Deposit' %}
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        {% else %}
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <span class="font-black text-gray-500 text-[10px] uppercase tracking-[0.2em]">{% if t.transaction_type == 'Deposit' %}Inbound{% else %}Outbound{% endif %}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="text-[13px] font-black text-white tracking-widest uppercase">
+                                {% if t.transaction_type == 'Deposit' %}
+                                    {{ t.from_account }}
+                                {% else %}
+                                    NODE <span class="text-green-500/40 px-1 inline-block">→</span> {{ t.to_account|truncatechars:15 }}
+                                {% endif %}
+                            </div>
+                            {% if t.memo %}
+                            <div class="text-[9px] text-gray-600 font-bold mt-1.5 uppercase tracking-widest max-w-[250px] truncate">Ref: {{ t.memo }}</div>
+                            {% endif %}
+                        </td>
+                        <td class="px-8 py-6 text-right">
+                            <div class="text-2xl font-heading font-black tracking-tighter {% if t.transaction_type == 'Deposit' %}text-green-400{% else %}text-white{% endif %}">
+                                {% if t.transaction_type == 'Deposit' %}+{% else %}-{% endif %}${{ t.amount|floatformat:2 }}
+                            </div>
+                        </td>
+                        <td class="px-8 py-6 text-center">
+                            <div class="inline-flex items-center px-4 py-2 bg-black/40 border border-white/5 rounded-xl text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:border-white/10 transition-colors shadow-inner">
+                                <span class="w-1.5 h-1.5 rounded-full {% if t.status == 'Completed' %}bg-green-500 animate-pulse{% else %}bg-gold{% endif %} mr-2.5 shadow-[0_0_8px_rgba(0,255,153,0.4)]"></span> {{ t.status }}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="py-24 text-center">
+                            <div class="w-20 h-20 rounded-full bg-white/[0.02] flex items-center justify-center mx-auto mb-6 border border-white/5">
+                                <svg class="w-10 h-10 text-white/5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            </div>
+                            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-700">Audit Records Null</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile View (Cards) -->
+        <div class="md:hidden divide-y divide-white/5">
+            {% for t in transfers %}
+            <div onclick="window.location='{% url 'transaction_detail' t.pk %}';" class="p-6 flex items-center justify-between active:bg-white/5 transition-colors">
+                <div class="flex items-center min-w-0 pr-4">
+                    <div class="w-12 h-12 rounded-[1.2rem] flex items-center justify-center shrink-0 bg-black/50 border border-white/5 shadow-inner overflow-hidden text-center p-0.5
+                        {% if t.transaction_type == 'Deposit' %}text-green-400 border-green-500/20 bg-green-500/5{% else %}text-white{% endif %}">
+                        {% if user.userprofile.profile_picture %}
+                            <div class="w-full h-full relative rounded-xl overflow-hidden">
+                                <img src="{{ user.userprofile.profile_picture.url }}" class="w-full h-full object-cover">
+                                {% if t.transaction_type == 'Deposit' %}
+                                <div class="absolute inset-0 bg-green-500/20 flex items-center justify-center backdrop-blur-[1px]">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                </div>
+                                {% else %}
+                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[1px]">
+                                    <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            {% if t.transaction_type == 'Deposit' %}
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            {% else %}
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="ml-4 truncate">
+                        <div class="text-[9px] text-gray-600 font-black uppercase tracking-widest mb-1">{{ t.timestamp|date:"M d, Y" }}</div>
+                        <div class="text-[14px] font-black text-white truncate tracking-wide mb-1 uppercase">{{ t.memo|default:t.from_account }}</div>
+                        <div class="text-[9px] text-green-500/60 font-black uppercase tracking-widest">ID: Trx{{ t.id }}{{ t.timestamp|date:"Y" }}</div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0">
+                    <div class="text-xl font-heading font-black tracking-tighter {% if t.transaction_type == 'Deposit' %}text-green-400{% else %}text-white{% endif %}">
+                        {% if t.transaction_type == 'Deposit' %}+{% else %}-{% endif %}${{ t.amount|floatformat:2 }}
+                    </div>
+                    <div class="inline-flex items-center px-2 py-0.5 mt-2 bg-white/5 border border-white/5 rounded text-[7px] font-black uppercase tracking-widest text-gray-500">
+                        {{ t.status }}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="p-20 text-center opacity-20">
+                 <p class="text-[10px] font-black uppercase tracking-widest text-gray-500">Ledger Empty</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination Controls -->
+        {% if transfers|length > 0 %}
+        <div class="px-8 py-10 border-t border-white/5 bg-white/[0.01] flex justify-center">
+            <nav class="flex items-center space-x-6">
+                <button class="text-[10px] font-black uppercase tracking-widest text-gray-700 cursor-not-allowed opacity-50">Vector Previous</button>
+                <div class="flex items-center space-x-3">
+                    <span class="w-8 h-8 flex items-center justify-center rounded-xl bg-green-500 text-black font-black text-[10px]">1</span>
+                    <span class="text-gray-700 text-[10px] font-black">/</span>
+                    <span class="text-gray-500 text-[10px] font-black">1</span>
+                </div>
+                <button class="text-[10px] font-black uppercase tracking-widest text-white hover:text-green-400 transition-colors">Vector Next</button>
+            </nav>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+<style>
+    .scrollbar-visible::-webkit-scrollbar { height: 12px; }
+    .scrollbar-visible::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+    .scrollbar-visible::-webkit-scrollbar-thumb { background: rgba(34,197,94,0.3); border-radius: 10px; border: 3px solid #050609; }
+    .scrollbar-visible::-webkit-scrollbar-thumb:hover { background: rgba(34,197,94,0.5); }
+    .overflow-x-auto { scroll-behavior: smooth; border-bottom: 2px solid rgba(255,255,255,0.02); }
+</style>
+{% endblock %}

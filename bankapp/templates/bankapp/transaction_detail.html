@@ -1,0 +1,106 @@
+{% extends 'bankapp/base.html' %}
+{% block title %}Receipt Vector - PrairieWealth{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-3xl mx-auto px-4 sm:px-6 relative z-10 pb-24">
+    
+    <!-- Back Button -->
+    <a href="{% url 'transactions' %}" class="group inline-flex items-center text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-green-400 transition-colors mb-8 pt-4">
+        <svg class="h-4 w-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Return to Ledger
+    </a>
+
+    <!-- Receipt Card -->
+    <div class="glass-card rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden border-t border-white/10 relative">
+        
+        <!-- Header -->
+        <div class="bg-black/60 p-10 text-center relative overflow-hidden border-b border-white/5">
+            <div class="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent pointer-events-none"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-green-500/10 rounded-full blur-[60px] pointer-events-none"></div>
+            
+            <div class="relative z-10">
+                <div class="w-20 h-20 bg-green-500/10 border border-green-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(0,230,118,0.2)]">
+                    <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h2 class="text-white text-3xl font-heading font-black tracking-tight mb-2">Settlement Executed</h2>
+                <p class="text-green-500/70 text-[10px] font-bold uppercase tracking-[0.3em]">Hash ID: PW-TRX-{{ t.id|stringformat:"06d" }}</p>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="p-8 sm:p-12 relative overflow-hidden">
+            <div class="absolute -right-20 -bottom-20 opacity-[0.02] pointer-events-none">
+                <svg class="w-64 h-64 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+            
+            <div class="text-center mb-12">
+                <h3 class="text-5xl sm:text-6xl font-heading font-black {% if t.transaction_type == 'Deposit' %}text-green-400{% else %}text-white{% endif %} tracking-tighter">
+                    {% if t.transaction_type == 'Deposit' %}+{% else %}-{% endif %}${{ t.amount|floatformat:2 }}
+                </h3>
+                <p class="text-gray-500 mt-4 font-bold uppercase tracking-[0.4em] text-[8px]">Transacted Volume (USD)</p>
+            </div>
+
+            <div class="space-y-6 py-8 border-y border-white/5">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <span class="text-gray-500 font-bold text-[10px] uppercase tracking-widest">Network Status</span>
+                    <span class="bg-green-500/10 text-green-400 border border-green-500/20 px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest self-start sm:self-auto flex items-center">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 mr-2 animate-pulse"></span> {{ t.status }}
+                    </span>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <span class="text-gray-500 font-bold text-[10px] uppercase tracking-widest">Execution Timestamp</span>
+                    <span class="text-white font-medium text-sm">{{ t.timestamp|date:"F j, Y • g:i A" }}</span>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <span class="text-gray-500 font-bold text-[10px] uppercase tracking-widest">Origin Node</span>
+                    <span class="text-white font-medium text-sm text-left sm:text-right">{{ t.from_account }}</span>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <span class="text-gray-500 font-bold text-[10px] uppercase tracking-widest">Destination Node</span>
+                    <span class="text-white font-medium text-sm text-left sm:text-right">{{ t.to_account }}</span>
+                </div>
+                
+                {% if t.memo %}
+                <div class="pt-6 mt-6 border-t border-white/5">
+                    <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-3">Attached Ledger Memo</p>
+                    <div class="bg-white/5 p-5 rounded-2xl text-gray-300 text-sm italic border border-white/10 shadow-inner">
+                        "{{ t.memo }}"
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Footer Summary -->
+            <div class="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="flex items-center text-gray-500 text-[10px] font-bold uppercase tracking-widest">
+                    <svg class="w-4 h-4 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    AES-256 Vault Secured
+                </div>
+                <button onclick="window.print()" class="btn-outline px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center group w-full sm:w-auto justify-center hover:bg-white/10">
+                    <svg class="w-4 h-4 mr-2 transform group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Export Vector
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action Footer -->
+    <div class="mt-12 text-center text-gray-500 text-xs">
+        <p>Direct inquiries to <a href="mailto:support@prairiewealth.online" class="text-green-500 font-bold hover:text-green-400 transition-colors uppercase tracking-widest text-[10px] ml-1">support@prairiewealth.online</a></p>
+    </div>
+</div>
+
+<style>
+/* Clean up print view */
+@media print {
+    body { background-color: white !important; color: black !important; }
+    .glass-card { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; }
+    .text-white { color: black !important; }
+    .text-gray-400, .text-gray-500 { color: #666 !important; }
+    nav, footer, button, a { display: none !important; }
+}
+</style>
+{% endblock %}

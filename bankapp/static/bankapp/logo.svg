@@ -1,0 +1,13 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle (Sun/Coin) -->
+  <circle cx="100" cy="90" r="50" fill="#FBC02D" />
+  
+  <!-- Prairie Hill 1 (Darker Green) -->
+  <path d="M0 200 Q 60 120 120 200 Z" fill="#2E7D32" />
+  
+  <!-- Prairie Hill 2 (Lighter Green) -->
+  <path d="M80 200 Q 140 130 200 200 Z" fill="#43A047" />
+  
+  <!-- Foundation Line -->
+  <rect x="0" y="195" width="200" height="5" fill="#1B5E20" />
+</svg>

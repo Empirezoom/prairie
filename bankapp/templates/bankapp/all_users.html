@@ -1,0 +1,165 @@
+{% extends 'bankapp/base.html' %}
+{% block title %}All Users | Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+    
+    <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-10">
+        <div>
+            <a href="{% url 'custom_admin' %}" class="group inline-flex items-center text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 hover:text-green-400 transition-all mb-8">
+                <svg class="h-4 w-4 mr-3 transform group-hover:-translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Admin Dashboard
+            </a>
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="w-12 h-[1px] bg-gold/30"></span>
+                <span class="text-gold font-black text-[10px] uppercase tracking-[0.5em]">Global Client Registry</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-heading font-black text-white tracking-tighter">
+                All <span class="text-gold italic font-light tracking-widest">Users</span>
+            </h1>
+            <p class="text-gray-500 font-bold mt-2 text-[11px] uppercase tracking-[0.3em]">Manage and interact with all registered members</p>
+        </div>
+        
+        <div class="glass-card bg-gold/[0.02] border-gold/20 px-10 py-6 rounded-[2rem] flex items-center shadow-2xl">
+            <span class="text-5xl font-heading font-black text-gold mr-5">{{ users_count }}</span>
+            <div>
+                <p class="text-[9px] font-black uppercase tracking-[0.3em] text-gold/60 leading-tight">Total<br>Members</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Users Table -->
+    <div class="glass-card rounded-[2.5rem] overflow-hidden border-white/5 shadow-[0_40px_80px_rgba(0,0,0,0.6)]">
+        <div class="p-8 sm:p-10 border-b border-white/5 bg-white/[0.01]">
+            <h3 class="text-xl font-heading font-black text-white tracking-tight">Active Users</h3>
+            <p class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.3em] mt-1">Manage all registered members</p>
+        </div>
+        
+        <div class="overflow-x-auto relative scrollbar-visible">
+            <table class="w-full text-left whitespace-nowrap">
+                <thead>
+                    <tr class="bg-black/20 border-b border-white/5">
+                        <th class="px-8 py-6 text-[10px] font-black text-gray-500 uppercase tracking-widest">User Name</th>
+                        <th class="px-8 py-6 text-right text-[10px] font-black text-gray-500 uppercase tracking-widest">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    {% for u in all_users %}
+                    <tr class="hover:bg-white/[0.03] transition-all group">
+                        <td class="px-8 py-6">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center text-white font-black text-xs shadow-inner uppercase overflow-hidden">
+                                    {% if u.userprofile.profile_picture %}
+                                    <img src="{{ u.userprofile.profile_picture.url }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                    {{ u.username|slice:":2" }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <p class="text-sm font-black text-white tracking-wide uppercase">{{ u.get_full_name|default:u.username }}</p>
+                                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{{ u.email }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="flex items-center space-x-2 justify-end">
+                                <button 
+                                    data-id="{{ u.id }}"
+                                    data-name="{{ u.get_full_name|default:u.username }}"
+                                    data-email="{{ u.email|default:'HIDDEN' }}"
+                                    data-checking="{{ u.userprofile.checking_balance|floatformat:2 }}"
+                                    data-savings="{{ u.userprofile.savings_balance|floatformat:2 }}"
+                                    data-ssn="{{ u.userprofile.ssn|default:'NOT_SET' }}"
+                                    data-address="{{ u.userprofile.address_line1|default:'' }} {{ u.userprofile.city|default:'' }}"
+                                    onclick="openQuickView(this)"
+                                    class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-all shadow-inner" title="Quick View">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </button>
+                                <button onclick="openAdminChat('{{ u.id }}', '{{ u.get_full_name|default:u.username }}')" class="p-2.5 bg-white/5 border border-white/10 text-gray-400 hover:text-green-400 hover:bg-green-500/5 transition-all shadow-inner rounded-xl" title="Chat">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                </button>
+                                <a href="{% url 'credit_user' %}" class="btn-primary p-2.5 rounded-xl text-black" title="Add Capital">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-8 py-20 text-center text-gray-600 font-black uppercase tracking-[0.3em] italic">No clients detected in registry</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Quick View -->
+<div id="quickViewModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050609]/95 backdrop-blur-xl hidden transition-opacity duration-500">
+    <div class="glass-card rounded-[3rem] p-8 sm:p-12 w-full max-w-xl border-white/20 shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative animate-pop">
+        <button onclick="closeQuickView()" class="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors bg-white/5 p-2 rounded-xl">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="mb-10 border-b border-white/5 pb-8">
+            <h3 id="qv_name" class="text-4xl font-heading font-black text-white tracking-tighter uppercase">User Name</h3>
+            <p id="qv_email" class="text-gray-500 font-bold mt-2 text-[11px] uppercase tracking-widest">USER_EMAIL</p>
+        </div>
+        <div class="space-y-6">
+            <div class="grid grid-cols-2 gap-6">
+                <div class="bg-black/40 p-6 rounded-[2rem] border border-white/5 shadow-inner">
+                    <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3">Checking</p>
+                    <p id="qv_checking" class="text-2xl font-heading font-black text-white tracking-tighter">$0.00</p>
+                </div>
+                <div class="bg-black/40 p-6 rounded-[2rem] border border-white/5 shadow-inner">
+                    <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3">Savings</p>
+                    <p id="qv_savings" class="text-2xl font-heading font-black text-gold tracking-tighter">$0.00</p>
+                </div>
+            </div>
+            <div class="space-y-4 bg-white/[0.02] p-6 rounded-3xl border border-white/5">
+                <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Address</p>
+                <p id="qv_address" class="text-xs font-bold text-gray-300 uppercase leading-relaxed">UNAVAILABLE</p>
+            </div>
+            <div class="flex gap-4">
+                <button id="qv_chat_btn" class="flex-1 btn-primary py-5 text-[10px] uppercase font-black tracking-widest rounded-2xl flex items-center justify-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <span>Relay Response</span>
+                </button>
+                <button onclick="closeQuickView()" class="px-8 btn-outline py-5 text-[10px] uppercase font-black tracking-widest rounded-2xl">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openQuickView(btn) {
+        const data = btn.dataset;
+        document.getElementById('qv_name').innerText = data.name;
+        document.getElementById('qv_email').innerText = data.email;
+        document.getElementById('qv_checking').innerText = "$" + data.checking;
+        document.getElementById('qv_savings').innerText = "$" + data.savings;
+        document.getElementById('qv_address').innerText = data.address.trim() || "UNVERIFIED_ORIGIN";
+        
+        const chatBtn = document.getElementById('qv_chat_btn');
+        chatBtn.onclick = () => {
+            closeQuickView();
+            openAdminChat(data.id, data.name);
+        };
+
+        document.getElementById('quickViewModal').classList.remove('hidden');
+        document.getElementById('quickViewModal').classList.add('flex');
+    }
+    function closeQuickView() {
+        document.getElementById('quickViewModal').classList.add('hidden');
+        document.getElementById('quickViewModal').classList.remove('flex');
+    }
+</script>
+
+<style>
+    .scrollbar-visible::-webkit-scrollbar { height: 12px; }
+    .scrollbar-visible::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+    .scrollbar-visible::-webkit-scrollbar-thumb { background: rgba(34,197,94,0.3); border-radius: 10px; border: 3px solid #050609; }
+    .scrollbar-visible::-webkit-scrollbar-thumb:hover { background: rgba(34,197,94,0.5); }
+    .overflow-x-auto { scroll-behavior: smooth; border-bottom: 2px solid rgba(255,255,255,0.02); }
+</style>
+{% endblock %}

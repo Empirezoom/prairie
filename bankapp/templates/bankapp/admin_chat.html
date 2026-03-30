@@ -1,0 +1,313 @@
+{% block title %}Comm Relay - {{ target_user.username }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    footer { display: none !important; }
+    main { padding-bottom: 0 !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="w-full h-[calc(100vh-80px)] md:max-h-[88vh] mx-auto md:px-4 sm:px-6 relative z-10 pb-6 pt-6 flex gap-1 items-stretch">
+    
+    <!-- Sidebar - Node Registry -->
+    <div class="hidden md:flex w-80 lg:w-96 flex-col glass-card border-white/5 rounded-l-[3rem] rounded-r-none border-r-0 shadow-[0_40px_100px_rgba(0,0,0,0.6)] shrink-0 overflow-hidden relative z-20">
+        <div class="p-8 border-b border-white/5 bg-white/[0.01] flex items-center justify-between z-10">
+            <div>
+                <h2 class="text-2xl font-heading font-black text-white tracking-tighter">Node <span class="text-green-500 italic font-light tracking-widest">Registry</span></h2>
+                <p class="text-[9px] font-black text-gray-500 uppercase tracking-[0.4em] mt-1.5">Inter-Comms Matrix</p>
+            </div>
+            <div class="w-10 h-10 rounded-2xl bg-black/40 flex items-center justify-center text-white border border-white/5 font-black text-[11px] shadow-inner">
+                {{ sidebar_conversations|length }}
+            </div>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-white/[0.01]">
+            {% for conv in sidebar_conversations %}
+            <a href="{% url 'admin_chat' conv.user.id %}" class="group flex items-center p-5 rounded-[2rem] transition-all border border-transparent hover:border-white/5 hover:bg-white/[0.03] {% if conv.user.id == target_user.id %}bg-white/[0.05] border-white/10 shadow-2xl relative overflow-hidden{% endif %}">
+                {% if conv.user.id == target_user.id %}
+                <div class="absolute inset-0 bg-green-500/[0.02] animate-pulse"></div>
+                {% endif %}
+                <div class="relative shrink-0">
+                    <div class="w-14 h-14 rounded-2xl bg-black/60 border border-white/5 flex items-center justify-center text-white font-black shadow-inner overflow-hidden transition-transform group-hover:scale-105">
+                        {% if conv.user.userprofile.profile_picture %}
+                        <img src="{{ conv.user.userprofile.profile_picture.url }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <span class="text-lg opacity-40">{{ conv.user.username|slice:":1"|upper }}</span>
+                        {% endif %}
+                    </div>
+                    {% if conv.unread_count > 0 %}
+                    <span class="absolute -top-1.5 -right-1.5 w-6 h-6 bg-green-500 text-black flex items-center justify-center rounded-full text-[10px] font-black border-2 border-[#050609] shadow-[0_0_15px_rgba(0,255,153,0.6)]">
+                        {{ conv.unread_count }}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="ml-5 flex-1 min-w-0 relative z-10">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-black text-white text-[11px] truncate uppercase tracking-widest">{{ conv.user.get_full_name|default:conv.user.username }}</span>
+                        <span class="text-[8px] font-black text-gray-600 uppercase tracking-widest">{{ conv.last_message.timestamp|date:"H:i" }}</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 truncate font-bold tracking-tight">{% if conv.last_message %}{{ conv.last_message.message }}{% else %}Initialize Handshake...{% endif %}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Main Terminal Area -->
+    <div class="flex-1 flex flex-col relative min-w-0 glass-card md:rounded-l-none md:rounded-r-[3rem] rounded-[3rem] border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.6)] overflow-hidden h-full border-l border-white/[0.02]">
+        
+        <!-- Chat Header -->
+        <div class="bg-black/60 px-8 sm:px-12 py-6 sm:py-8 border-b border-white/5 flex items-center justify-between shrink-0 relative z-10 backdrop-blur-2xl">
+            <div class="flex items-center min-w-0">
+                <a href="{% url 'custom_admin' %}" class="md:hidden mr-5 text-gray-500 hover:text-white transition-colors bg-white/5 p-3 rounded-2xl border border-white/5 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                </a>
+                
+                <div class="hidden md:flex w-14 h-14 rounded-2xl bg-black/60 flex items-center justify-center text-white font-black shadow-inner border border-white/5 overflow-hidden shrink-0">
+                    {% if target_user.userprofile.profile_picture %}
+                    <img src="{{ target_user.userprofile.profile_picture.url }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <span class="text-xl opacity-40">{{ target_user.username|slice:":1"|upper }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="ml-0 md:ml-6 truncate">
+                    <div class="flex items-center gap-4">
+                        <h2 class="text-white font-heading font-black text-2xl sm:text-3xl tracking-tighter truncate">{{ target_user.get_full_name|default:target_user.username }}</h2>
+                        <span class="hidden lg:inline-flex bg-green-500/[0.03] text-green-500/60 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] border border-green-500/10 shadow-inner">UID: PW-{{ target_user.id }}</span>
+                    </div>
+                    <div class="flex items-center text-[10px] text-gray-500 font-black uppercase tracking-[0.4em] mt-2 italic">
+                        <span class="w-2 h-2 rounded-full bg-green-500 mr-3 shadow-[0_0_10px_rgba(0,255,153,0.8)] animate-pulse"></span>
+                        Relay Authorized Node
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="document.getElementById('userInfoModal').classList.remove('hidden')" class="btn-outline px-6 py-4 rounded-2xl transition-all font-black text-[10px] uppercase tracking-[0.3em] shadow-2xl flex items-center group/btn active:scale-95">
+                <svg class="w-4 h-4 sm:mr-3 group-hover/btn:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+                <span class="hidden sm:inline">Quantum Dump</span>
+            </button>
+        </div>
+
+        <!-- Chat Body with specialized gradient -->
+        <div id="adminChatBody" class="flex-1 overflow-y-auto px-6 py-10 sm:px-12 sm:py-12 space-y-8 bg-[radial-gradient(circle_at_top_right,_rgba(34,197,94,0.03)_0%,_transparent_50%)] min-h-0 flex flex-col relative z-0 scroll-smooth">
+            <!-- Messages pushed by JS -->
+        </div>
+        
+        <!-- Command Transcription Area (Form) -->
+        <div class="bg-black/60 px-6 py-6 sm:px-12 sm:py-10 border-t border-white/5 shrink-0 relative z-10 backdrop-blur-2xl">
+            <form id="adminChatForm" class="flex items-end gap-5 max-w-5xl mx-auto group">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ target_user.id }}">
+                
+                <button type="button" onclick="document.getElementById('adminFileInput').click()" class="bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white w-14 h-14 sm:w-16 sm:h-16 rounded-[1.5rem] flex items-center justify-center transition-all border border-white/5 shrink-0 shadow-inner active:scale-90 group/file relative" title="Transmit Data Pack">
+                    <svg class="w-6 h-6 transition-transform group-hover/file:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                </button>
+                <input type="file" id="adminFileInput" name="attachment" class="hidden">
+                
+                <div class="flex-1 relative">
+                    <div id="fileNameAdmin" class="absolute left-6 -top-14 text-[9px] font-black text-white bg-black/80 px-5 py-2.5 rounded-xl border border-white/10 hidden backdrop-blur-xl uppercase tracking-widest truncate max-w-[250px] shadow-[0_10px_30px_rgba(0,0,0,0.5)] animate-pop"></div>
+                    <textarea id="adminChatInput" name="message" rows="1" placeholder="ENTER SECURE COMMAND TRANSMISSION..." class="w-full px-8 py-5 bg-black/60 border border-white/5 rounded-[1.8rem] resize-none overflow-hidden text-sm text-white placeholder-gray-700 outline-none focus:border-green-500/40 focus:bg-black/80 transition-all font-black tracking-widest shadow-inner max-h-48" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'"></textarea>
+                </div>
+
+                <button type="submit" id="adminChatSend" class="bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-black w-14 h-14 sm:w-16 sm:h-16 rounded-[1.5rem] flex items-center justify-center shadow-[0_15px_40px_rgba(0,180,100,0.2)] transition-all border border-green-500/20 hover:border-green-500 cursor-pointer group shrink-0 active:scale-90 overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-green-400 to-green-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <svg class="w-6 h-6 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+            </form>
+            <div class="text-center mt-6">
+                <p class="text-[9px] font-black text-gray-700 uppercase tracking-[0.5em] inline-flex items-center">
+                    <span class="w-1.5 h-1.5 rounded-full bg-gray-700 mr-3 animate-pulse"></span>
+                    Quantum AES-512 Command Integrity Linked
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quantum Data Dump Modal -->
+<div id="userInfoModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#050609]/95 backdrop-blur-xl hidden transition-opacity duration-300">
+    <div class="glass-card rounded-[3.5rem] p-10 sm:p-14 w-full max-w-2xl border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative animate-pop">
+        <button onclick="document.getElementById('userInfoModal').classList.add('hidden')" class="absolute top-10 right-10 text-gray-600 hover:text-white transition-all bg-white/5 p-3 rounded-2xl hover:rotate-90">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        
+        <div class="mb-12 border-b border-white/5 pb-10">
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="w-10 h-[1px] bg-green-500/40"></span>
+                <span class="text-green-500 font-black uppercase tracking-[0.5em] text-[10px]">Quantum Subject Profile Dump</span>
+            </div>
+            <h3 class="text-4xl font-heading font-black text-white tracking-tighter">{{ target_user.get_full_name|default:target_user.username }}</h3>
+            <p class="text-gray-500 font-black mt-3 text-[11px] uppercase tracking-[0.4em] italic">{{ target_user.email }}</p>
+        </div>
+        
+        <div class="space-y-10">
+            <div class="grid grid-cols-2 gap-6">
+                <div class="bg-black/60 p-8 rounded-[2rem] border border-white/5 shadow-inner group/stat">
+                    <p class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] mb-3 group-hover/stat:text-green-400 transition-colors">Checking Node</p>
+                    <p class="text-3xl font-heading font-black text-white tracking-widest">${{ target_user.userprofile.checking_balance|floatformat:2 }}</p>
+                </div>
+                <div class="bg-black/60 p-8 rounded-[2rem] border border-white/5 shadow-inner group/stat">
+                    <p class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] mb-3 group-hover/stat:text-gold transition-colors">Savings Matrix</p>
+                    <p class="text-3xl font-heading font-black text-white tracking-widest">${{ target_user.userprofile.savings_balance|floatformat:2 }}</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-10 bg-white/[0.01] p-10 rounded-[2.5rem] border border-white/5 shadow-2xl">
+                <div>
+                    <p class="text-[9px] font-black text-gray-600 uppercase tracking-[0.5em] mb-3">Identity Proof Hash</p>
+                    <div class="flex items-center space-x-3">
+                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
+                         <p class="text-sm font-black text-gray-400 tracking-[0.5em] uppercase">{{ target_user.userprofile.ssn|default:"NODE_NULL" }}</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-gray-600 uppercase tracking-[0.5em] mb-3">Geospatial Domicile</p>
+                    <div class="space-y-1 border-l border-white/10 pl-5">
+                         <p class="text-[11px] font-black text-white uppercase tracking-widest">{{ target_user.userprofile.address_line1|default:"UNVERIFIED_COORDINATES" }}</p>
+                         <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{{ target_user.userprofile.city|default:"NA" }}, {{ target_user.userprofile.state|default:"NA" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-6 pt-6 border-t border-white/5">
+                <a href="mailto:{{ target_user.email }}" class="flex-1 btn-primary py-6 text-[11px] uppercase font-black tracking-[0.5em] rounded-2xl text-center shadow-2xl relative overflow-hidden group/btn">
+                     <span class="relative z-10 text-black">Broadcast Protocol</span>
+                     <div class="absolute inset-0 bg-white group-hover/btn:bg-gray-200 transition-colors"></div>
+                </a>
+                <button onclick="document.getElementById('userInfoModal').classList.add('hidden')" class="px-10 py-6 text-[11px] font-black uppercase tracking-[0.3em] text-gray-600 hover:text-white transition-colors">Close Dump</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #adminChatBody::-webkit-scrollbar { width: 5px; }
+    #adminChatBody::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
+    #adminChatBody::-webkit-scrollbar-track { background: transparent; }
+    .animate-pop { animation: pop 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+    @keyframes pop {
+        0% { transform: scale(0.95); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const chatBody = document.getElementById("adminChatBody");
+        const chatForm = document.getElementById("adminChatForm");
+        const chatInput = document.getElementById("adminChatInput");
+        const fileInput = document.getElementById("adminFileInput");
+        const fileNameUI = document.getElementById("fileNameAdmin");
+        const targetUserId = "{{ target_user.id }}";
+        
+        fileInput.addEventListener('change', () => {
+            if(fileInput.files.length > 0) {
+                fileNameUI.classList.remove('hidden');
+                fileNameUI.innerText = "📎 PACK_BUFFER: " + fileInput.files[0].name.substring(0,18) + "...";
+            } else {
+                fileNameUI.classList.add('hidden');
+            }
+        });
+
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
+                e.preventDefault();
+                chatForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        function scrollChat() {
+            if(chatBody) {
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+        }
+
+        function loadChats() {
+            fetch(`/api/get_chats/?user_id=${targetUserId}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.chats) {
+                    let html = '';
+                    if(data.chats.length === 0) {
+                        html = `
+                            <div class="h-full w-full flex flex-col items-center justify-center text-gray-700 mt-32 opacity-30">
+                                <div class="w-24 h-24 bg-white/5 rounded-[2rem] flex items-center justify-center mb-8 border border-white/10 shadow-inner">
+                                    <svg class="w-10 h-10 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                </div>
+                                <p class="font-black uppercase tracking-[0.6em] text-[11px] italic">Securing Secure Vector...</p>
+                            </div>
+                        `;
+                    }
+                    data.chats.forEach(c => {
+                        let attHtml = '';
+                        if(c.attachment) {
+                            attHtml = `<a href="${c.attachment}" target="_blank" class="flex items-center gap-3 bg-black/40 hover:bg-black p-4 rounded-2xl mt-5 font-black text-[10px] transition-all border border-white/5 uppercase tracking-[0.3em] shrink-0 w-max text-white shadow-2xl group/file">
+                                <svg class="w-4 h-4 text-green-500 group-hover/file:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg> Access Secure Element
+                            </a>`;
+                        }
+
+                        if (!c.is_admin) {
+                            html += `
+                            <div class="flex justify-start animate-pop">
+                                <div class="max-w-[85%] lg:max-w-[65%]">
+                                    <div class="bg-white/5 border border-white/10 shadow-inner rounded-[2.5rem] rounded-bl-none px-8 py-7 text-[13px] sm:text-[14px] text-white font-bold leading-relaxed tracking-wide">
+                                        ${c.message}
+                                        ${attHtml}
+                                    </div>
+                                    <span class="text-[9px] font-black text-gray-700 mt-4 block ml-6 uppercase tracking-[0.5em] italic">Proxy Transm: ${c.time} • LOG_VERIF_NODE</span>
+                                </div>
+                            </div>
+                            `;
+                        } else {
+                            html += `
+                            <div class="flex justify-end animate-pop">
+                                <div class="max-w-[85%] lg:max-w-[65%]">
+                                    <div class="bg-green-500/[0.03] shadow-[0_20px_60px_rgba(0,230,118,0.1)] rounded-[2.5rem] rounded-br-none px-8 py-7 text-[13px] sm:text-[14px] text-green-50 font-black leading-relaxed border border-green-500/20 tracking-wide relative overflow-hidden group/adminm">
+                                        <div class="absolute inset-x-0 bottom-0 h-[3px] bg-green-500 animate-pulse opacity-50"></div>
+                                        ${c.message}
+                                        ${attHtml}
+                                    </div>
+                                    <div class="text-[9px] font-black text-gray-700 mt-4 flex justify-end items-center mr-6 uppercase tracking-[0.5em] italic">
+                                        <span>Terminal Origin Node • ${c.time}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        }
+                    });
+                    
+                    if(chatBody.innerHTML !== html) {
+                        chatBody.innerHTML = html;
+                        scrollChat();
+                    }
+                }
+            });
+        }
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if(!message && fileInput.files.length === 0) return;
+
+            const formData = new FormData(chatForm);
+            
+            chatInput.value = '';
+            chatInput.style.height = 'auto'; 
+            fileInput.value = '';
+            fileNameUI.classList.add('hidden');
+            
+            fetch('/api/send_chat/', {
+                method: 'POST',
+                body: formData
+            }).then(() => {
+                loadChats();
+            });
+        });
+
+        loadChats();
+        setInterval(loadChats, 4000); 
+    });
+</script>
+{% endblock %}

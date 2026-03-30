@@ -1,0 +1,286 @@
+{% extends 'bankapp/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | PrairieWealth Private{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative pb-24">
+    <!-- Background Accents -->
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-green-500/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+    <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-6 sm:space-y-0 relative z-10 pt-4">
+        <div class="flex items-center space-x-4">
+            <!-- Mobile Profile Pic (Visible only on small screens) -->
+            <div class="sm:hidden w-16 h-16 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center text-white font-black text-xl shadow-inner overflow-hidden uppercase shrink-0">
+                {% if user.userprofile.profile_picture %}
+                <img src="{{ user.userprofile.profile_picture.url }}" class="w-full h-full object-cover">
+                {% else %}
+                {{ user.username|slice:":2" }}
+                {% endif %}
+            </div>
+            <div>
+                <h1 class="text-3xl font-heading font-black text-white tracking-tight">
+                    Good {% now "A" as current_time %}{% if current_time == "AM" %}Morning{% else %}Evening{% endif %}, <br class="sm:hidden"> <span class="text-green-400">{{ user.first_name|default:user.username }}</span>.
+                </h1>
+                <p class="text-[11px] font-bold uppercase tracking-widest text-gray-500 mt-1">Portfolio Genesis Overview</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            {% if user.userprofile.verification_status == 'verified' %}
+                <div class="w-full sm:w-auto glass-card px-4 py-2.5 rounded-xl border border-green-500/30 flex items-center justify-center space-x-2 bg-green-500/5 shadow-[0_0_15px_rgba(0,230,118,0.1)]">
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-green-400">Account Verified</span>
+                </div>
+            {% else %}
+                <a href="{% url 'verify' %}" class="w-full sm:w-auto btn-outline px-4 py-2.5 rounded-xl flex items-center justify-center space-x-2 text-red-400 border-red-500/30 bg-red-500/5 hover:bg-red-500/10">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <span class="text-[10px] font-black uppercase tracking-widest">Verify Identity</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Mobile-Optimized Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+        
+        <!-- Main Portfolio Panel -->
+        <div class="lg:col-span-8 space-y-8">
+            
+            <!-- Checking Account Card -->
+            <div class="relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
+                <div class="relative glass-card rounded-[2.5rem] p-8 sm:p-10 overflow-hidden border border-white/10 bg-gradient-to-br from-white/[0.05] to-transparent">
+                    <div class="flex justify-between items-start mb-10">
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-green-400 mb-2">Checking Account</p>
+                            <h2 class="text-2xl sm:text-3xl font-heading font-black text-white tracking-tight">Private Checking</h2>
+                            <p class="text-white/40 text-[11px] font-mono tracking-[0.2em] mt-2">ACCOUNT •••• {{ user.userprofile.checking_account_number|slice:"-4:" }}</p>
+                        </div>
+                        <div class="w-14 h-10 sm:w-16 sm:h-12 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center border border-white/20 backdrop-blur-md shadow-2xl relative overflow-hidden group-hover:scale-105 transition-transform">
+                            <div class="absolute inset-0 bg-white/10 skew-x-12 translate-x-2"></div>
+                            <div class="w-5 h-4 bg-black/40 rounded-sm"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-[0.3em] text-gray-500 mb-2">Available Balance</p>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-3xl font-light text-green-500 opacity-80">$</span>
+                                <span class="text-5xl sm:text-7xl font-heading font-black text-white tracking-tighter">{{ user.userprofile.checking_balance }}</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-4 w-full sm:w-auto">
+                            <a href="{% url 'transfer' %}" class="flex-1 sm:flex-none btn-primary px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center">Move Funds</a>
+                            <a href="{% url 'pay_bills' %}" class="flex-1 sm:flex-none btn-outline px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center">Settlements</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Savings Account Card -->
+            <div class="relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-gold/20 to-yellow-600/20 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
+                <div class="relative glass-card rounded-[2.5rem] p-8 sm:p-10 overflow-hidden border border-white/10 bg-gradient-to-tr from-gold/[0.03] to-transparent">
+                    <div class="flex justify-between items-start mb-10">
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-gold mb-2">Savings Reserve</p>
+                            <h2 class="text-2xl sm:text-3xl font-heading font-black text-white tracking-tight">Prime Savings</h2>
+                            <p class="text-white/40 text-[11px] font-mono tracking-[0.2em] mt-2">VAULT •••• {{ user.userprofile.savings_account_number|slice:"-4:" }}</p>
+                        </div>
+                        <div class="px-4 py-2 glass-card rounded-xl border border-gold/20 bg-gold/5 flex flex-col items-center justify-center backdrop-blur-md">
+                            <p class="text-[8px] font-black text-gold uppercase tracking-[0.2em]">Yield</p>
+                            <p class="text-lg font-heading font-black text-white">{{ user.userprofile.savings_apy }}%</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
+                        <div>
+                            <p class="text-[9px] font-black uppercase tracking-[0.3em] text-gray-500 mb-2">Total Savings</p>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-3xl font-light text-gold opacity-80">$</span>
+                                <span class="text-5xl sm:text-7xl font-heading font-black text-white tracking-tighter">{{ user.userprofile.savings_balance }}</span>
+                            </div>
+                        </div>
+                        <div class="w-full sm:w-auto py-2">
+                            <div class="flex items-center space-x-2 justify-end">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                <p class="text-[10px] font-black text-white uppercase tracking-[0.2em]">Compounding Active</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions List -->
+            <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 border border-white/5">
+                <div class="flex items-center justify-between mb-10">
+                    <div>
+                        <h3 class="text-xl font-heading font-black text-white tracking-tight">Recent activity</h3>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] mt-1">Check your 3 last transfers</p>
+                    </div>
+                    <a href="{% url 'transactions' %}" class="px-5 py-2.5 rounded-xl border border-white/10 text-[9px] font-black text-gray-400 hover:text-white hover:border-white/20 transition-all uppercase tracking-widest bg-white/[0.02]">View&nbsp;All</a>
+                </div>
+
+                <div class="overflow-x-auto scrollbar-visible">
+                    <div class="space-y-3 min-w-[320px]">
+                        {% if transfers %}
+                            {% for t in transfers %}
+                            <div onclick="window.location='{% url 'transaction_detail' t.pk %}';" class="group flex items-center justify-between cursor-pointer p-5 rounded-3xl hover:bg-white/[0.04] transition-all border border-transparent hover:border-white/5 active:scale-[0.99] bg-white/[0.01]">
+                                <div class="flex items-center space-x-5 w-[60%] sm:w-auto">
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-[1.2rem] flex items-center justify-center shrink-0 shadow-2xl border border-white/5 bg-black/40 text-gray-400 transition-all group-hover:scale-105 overflow-hidden p-0.5
+                                        {% if t.transaction_type == 'Deposit' %}!bg-green-500/10 !text-green-400 !border-green-500/20{% endif %}">
+                                        {% if user.userprofile.profile_picture %}
+                                            <div class="w-full h-full rounded-xl overflow-hidden relative">
+                                                <img src="{{ user.userprofile.profile_picture.url }}" class="w-full h-full object-cover">
+                                                {% if t.transaction_type == 'Deposit' %}
+                                                <div class="absolute inset-0 bg-green-500/20 flex items-center justify-center backdrop-blur-[1px]">
+                                                    <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                                                </div>
+                                                {% else %}
+                                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[1px]">
+                                                    <svg class="w-6 h-6 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        {% else %}
+                                            {% if t.transaction_type == 'Deposit' %}
+                                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                                            {% else %}
+                                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="truncate">
+                                        <div class="text-[9px] text-gray-600 font-black uppercase tracking-widest mb-1">{{ t.timestamp|date:"M d, Y" }}</div>
+                                        <p class="text-[14px] font-black text-white truncate tracking-wide mb-1 uppercase group-hover:text-green-400 transition-colors">{{ t.memo|default:t.from_account }}</p>
+                                        <div class="text-[9px] text-green-500/60 font-black uppercase tracking-widest">ID: Trx{{ t.id }}{{ t.timestamp|date:"Y" }}</div>
+                                    </div>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <p class="text-lg sm:text-xl font-heading font-black tracking-tighter {% if t.transaction_type == 'Deposit' %}text-green-400{% else %}text-white{% endif %}">
+                                        {% if t.transaction_type == 'Deposit' %}+{% else %}-{% endif %}${{ t.amount|floatformat:2 }}
+                                    </p>
+                                    <span class="px-2 py-0.5 rounded-md bg-white/[0.05] text-[8px] font-black uppercase tracking-widest text-gray-500 mt-1 inline-block border border-white/5">{{ t.status }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="py-20 flex flex-col items-center justify-center text-center">
+                                <div class="w-20 h-20 rounded-full bg-white/[0.02] flex items-center justify-center mb-6 border border-white/5">
+                                    <svg class="w-10 h-10 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                </div>
+                                <p class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">No Ledger Operations Recorded</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Action Matrix (Sidebar on Desktop) -->
+        <div class="lg:col-span-4 space-y-8">
+            
+            <!-- Quick Actions Grid -->
+            <div class="glass-card rounded-[2.5rem] p-8 border border-white/5">
+                <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-8 text-center">Command Center</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="{% url 'transfer' %}" class="flex flex-col items-center justify-center p-6 glass-card rounded-3xl hover:bg-white/[0.08] transition-all group border-white/5 active:scale-95 text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-green-400/10 flex items-center justify-center mb-4 border border-green-400/20 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-white">Transfer</span>
+                    </a>
+
+                    <a href="{% url 'statements' %}" class="flex flex-col items-center justify-center p-6 glass-card rounded-3xl hover:bg-white/[0.08] transition-all group border-white/5 active:scale-95 text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-4 border border-white/10 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-white/60 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-white">Logs</span>
+                    </a>
+                    <a href="{% url 'profile' %}" class="flex flex-col items-center justify-center p-6 glass-card rounded-3xl hover:bg-white/[0.08] transition-all group border-white/5 active:scale-95 text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-4 border border-white/10 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-white/60 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-white">Profile</span>
+                    </a>
+                    <button onclick="openExternalModal()" class="flex flex-col items-center justify-center p-6 glass-card rounded-3xl hover:bg-white/[0.08] transition-all group border-white/5 active:scale-95 text-center w-full">
+                        <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-4 border border-gold/20 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                        </div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-white">Add Payee</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pre-Approved Offer Card (Mobile Optimized) -->
+            <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 bg-gradient-to-br from-gold/10 to-transparent border border-gold/20 relative overflow-hidden group">
+                <div class="absolute -right-20 -top-20 w-48 h-48 bg-gold/20 blur-[100px] group-hover:bg-gold/30 transition-all duration-700"></div>
+                <div class="relative z-10">
+                    <span class="text-gold font-black text-[10px] uppercase tracking-[0.4em] mb-4 block">Elite Privileges</span>
+                    <h4 class="text-2xl font-heading font-black text-white mb-3 leading-tight tracking-tight">PrairieWealth Infinite</h4>
+                    <p class="text-[11px] text-white/50 font-medium tracking-wide mb-8 leading-relaxed">Executive concierge access, zero global transaction friction, and 5% wealth-back on ultra-luxury lifestyle allocations.</p>
+                    <button class="w-full bg-gold hover:bg-yellow-400 text-black py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-[0_12px_44px_-8px_rgba(255,193,7,0.4)] hover:-translate-y-1">Initialize Activation</button>
+                </div>
+            </div>
+</div>
+
+<!-- Premium Compliance Modal (for Add Payee) -->
+<div id="externalModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050609]/95 backdrop-blur-xl hidden transition-opacity duration-500">
+    <div class="glass-card rounded-[3rem] p-10 sm:p-16 max-w-xl w-full relative border-white/20 shadow-[0_40px_100px_rgba(0,0,0,0.8)] animate-pop">
+        <button onclick="closeExternalModal()" class="absolute top-10 right-10 text-gray-600 hover:text-white transition-colors bg-white/5 p-2 rounded-xl">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        
+        <div class="mb-10">
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="w-8 h-[1px] bg-gold/50"></span>
+                <span class="text-gold font-black uppercase tracking-widest text-[9px]">Global Outbound Matrix</span>
+            </div>
+            <h2 class="text-4xl font-heading font-black text-white tracking-tighter">External Settlement</h2>
+        </div>
+        
+        <div class="p-8 rounded-[2rem] bg-gold/[0.02] border border-gold/10 mb-10 text-center">
+            <p class="text-[11px] font-bold text-gray-400 leading-relaxed uppercase tracking-widest">
+                Federal compliance mandates <span class="text-white font-black">Identity Integrity</span> for global fund routing vectors.
+            </p>
+        </div>
+        <div class="space-y-4">
+            <a href="{% url 'verify' %}" class="btn-primary flex items-center justify-center w-full py-6 rounded-2xl text-[10px] font-black uppercase tracking-[0.4em] shadow-2xl">
+                Initialize Verification
+            </a>
+            <button onclick="closeExternalModal()" class="w-full py-4 text-[10px] font-black uppercase tracking-widest text-gray-600 hover:text-white transition-all text-center">Abort Operation</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openExternalModal() {
+        const modal = document.getElementById('externalModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+    function closeExternalModal() {
+        document.getElementById('externalModal').classList.add('hidden');
+        document.getElementById('quickViewModal')?.classList.add('hidden');
+    }
+</script>
+
+<style>
+    @keyframes pop {
+        0% { transform: scale(0.95); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop { animation: pop 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+    
+    /* Visible Navigation Scrollbars (Special Tables) */
+    .scrollbar-visible::-webkit-scrollbar { height: 12px; }
+    .scrollbar-visible::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+    .scrollbar-visible::-webkit-scrollbar-thumb { background: rgba(34,197,94,0.3); border-radius: 10px; border: 3px solid #050609; }
+    .scrollbar-visible::-webkit-scrollbar-thumb:hover { background: rgba(34,197,94,0.5); }
+    .overflow-x-auto { scroll-behavior: smooth; border-bottom: 2px solid rgba(255,255,255,0.02); }
+</style>
+{% endblock %}

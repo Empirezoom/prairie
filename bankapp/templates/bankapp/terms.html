@@ -1,0 +1,40 @@
+{% extends 'bankapp/base.html' %}
+{% block title %}Terms of Use - PrairieWealth{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-4xl mx-auto px-4 sm:px-6 relative z-10 pb-24 pt-16">
+    <div class="mb-12 border-b border-white/10 pb-6">
+        <h1 class="text-4xl sm:text-5xl font-black font-heading text-white tracking-tighter">Terms of <span class="text-gray-500 italic font-light tracking-wide">Operation</span></h1>
+        <p class="text-gray-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-4">Last Updated: <span class="text-white font-black">{% now "F j, Y" %}</span></p>
+    </div>
+    
+    <div class="glass-card rounded-[2rem] p-8 sm:p-12 border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col gap-12">
+        <p class="text-[11px] font-black text-gold uppercase tracking-[0.3em]">Accessing the PrairieWealth matrix mandates unconditional acceptance of the following systemic operations.</p>
+        
+        <div class="space-y-12">
+            <div class="bg-black/30 p-6 rounded-2xl border border-white/5">
+                <h2 class="text-sm font-black text-white tracking-widest mb-4 uppercase">01. Acceptance Protocol</h2>
+                <p class="text-xs font-bold text-gray-400 leading-relaxed uppercase tracking-wider">
+                    By accessing or linking to our sovereign digital environment, you acknowledge and accept these Terms of Operation framework. Rejection of this mandate requires immediate disconnection from the node.
+                </p>
+            </div>
+
+            <div class="bg-black/30 p-6 rounded-2xl border border-white/5">
+                <h2 class="text-sm font-black text-white tracking-widest mb-4 uppercase">02. Software License Matrix</h2>
+                <p class="text-xs font-bold text-gray-400 leading-relaxed uppercase tracking-wider">
+                    Authorization is temporarily granted to cache front-end binary assets (information and GUI architectures) on PrairieWealth's terminal solely for the purpose of private, cryptographic observation.
+                </p>
+            </div>
+
+            <div class="bg-black/30 p-6 rounded-2xl border border-white/5">
+                <h2 class="text-sm font-black text-white tracking-widest mb-4 uppercase">03. Liability Insulation</h2>
+                <p class="text-xs font-bold text-gray-400 leading-relaxed uppercase tracking-wider">
+                    The systemic architecture and all associated liquidity data are deployed 'as is'. PrairieWealth nullifies all implied computational warranties, securing zero systemic liability for unverified losses traversing standard internet protocols without AES-256 validation.
+                </p>
+            </div>
+        </div>
+        
+        <p class="text-[9px] text-gray-500 uppercase tracking-widest font-black text-center mt-6">For the unredacted master agreement, establish secure contact with your regional node supervisor.</p>
+    </div>
+</div>
+{% endblock %}

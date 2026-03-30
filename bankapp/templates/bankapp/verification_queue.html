@@ -1,0 +1,115 @@
+{% extends 'bankapp/base.html' %}
+{% block title %}Identity Queue | Mission Control{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10 pb-24">
+    
+    <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-10">
+        <div>
+            <a href="{% url 'custom_admin' %}" class="group inline-flex items-center text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 hover:text-green-400 transition-all mb-8">
+                <svg class="h-4 w-4 mr-3 transform group-hover:-translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Admin Dashboard
+            </a>
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="w-12 h-[1px] bg-gold/30"></span>
+                <span class="text-gold font-black text-[10px] uppercase tracking-[0.5em]">Identity Check Requests</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-heading font-black text-white tracking-tighter">
+                ID <span class="text-gold italic font-light tracking-widest">Checks</span>
+            </h1>
+            <p class="text-gray-500 font-bold mt-2 text-[11px] uppercase tracking-[0.3em]">Check user ID photos and approve them</p>
+        </div>
+        
+        <div class="glass-card bg-gold/[0.02] border-gold/20 px-10 py-6 rounded-[2rem] flex items-center shadow-[0_20px_40px_rgba(212,175,55,0.1)] relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <span class="text-5xl font-heading font-black text-gold mr-5 relative z-10">{{ pending_users.count }}</span>
+            <div class="relative z-10">
+                <p class="text-[9px] font-black uppercase tracking-[0.3em] text-gold/60 leading-tight">Signals<br>Pending</p>
+                <div class="w-full h-[1px] bg-gold/20 mt-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Identity Matrix Table -->
+    <div class="glass-card rounded-[2.5rem] overflow-hidden border-white/5 shadow-[0_40px_80px_rgba(0,0,0,0.6)]">
+        <div class="overflow-x-auto relative scrollbar-visible">
+            <table class="w-full text-left whitespace-nowrap">
+                <thead class="bg-black/40 border-b border-white/5">
+                    <tr class="text-[9px] font-black text-gray-500 uppercase tracking-[0.4em]">
+                        <th class="px-8 py-7">Subject Identity</th>
+                        <th class="px-8 py-7">ID Status</th>
+                        <th class="px-8 py-7">User ID</th>
+                        <th class="px-8 py-7">Administrative Action</th>
+                        <th class="px-8 py-7 text-right">System Directive</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    {% for p in pending_users %}
+                    <tr class="hover:bg-white/[0.03] transition-all group">
+                        <td class="px-8 py-8">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 rounded-2xl bg-black/50 border border-white/10 flex items-center justify-center text-white font-black shadow-inner overflow-hidden transition-transform group-hover:scale-110">
+                                    {% if p.profile_picture %}
+                                    <img src="{{ p.profile_picture.url }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                    <span class="text-lg opacity-40">{{ p.user.username|slice:":1"|upper }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="ml-5">
+                                    <div class="text-sm font-black text-white tracking-wide group-hover:text-gold transition-colors">{{ p.user.get_full_name|default:p.user.username }}</div>
+                                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1.5">{{ p.user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-8">
+                            <span class="inline-flex items-center px-4 py-1.5 rounded-lg text-[8px] font-black uppercase tracking-widest bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 animate-pulse">Pending Verification</span>
+                        </td>
+                        <td class="px-8 py-8">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">ID-{{ p.user.id }}</span>
+                        </td>
+                        <td class="px-8 py-8">
+                            <a href="{% url 'verification_detail' p.user.id %}" class="inline-flex items-center px-6 py-3 bg-white/5 hover:bg-gold border border-white/10 hover:border-gold text-gray-400 hover:text-black rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all shadow-lg group-hover:scale-105">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                SUBJECT DOSSIER
+                            </a>
+                        </td>
+                        <td class="px-8 py-8 text-right">
+                            <div class="flex items-center justify-end space-x-3">
+                                <form action="{% url 'approve_verification' p.user.id %}" method="POST" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-green-500/10 hover:bg-green-500 border border-green-500/20 hover:border-green-500 text-green-400 hover:text-black px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all shadow-lg active:scale-95">
+                                        APPROVE
+                                    </button>
+                                </form>
+                                <form action="{% url 'reject_verification' p.user.id %}" method="POST" onsubmit="return confirm('Purge unverified document cache? This action is immutable.')" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all active:scale-95">
+                                        PURGE
+                                    </button>
+                                </form>
+                                <a href="{% url 'admin_chat' p.user.id %}" class="p-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl transition-all shadow-inner">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-8 py-32 text-center">
+                            <div class="flex flex-col items-center opacity-30">
+                                <div class="w-24 h-24 bg-white/5 rounded-[2rem] flex items-center justify-center mb-8 border border-white/10 relative overflow-hidden">
+                                     <div class="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent"></div>
+                                    <svg class="w-10 h-10 text-green-500 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <h3 class="text-2xl font-black text-white font-heading tracking-[0.3em] uppercase">Queue Sanitized</h3>
+                                <p class="text-[10px] text-gray-500 mt-3 font-bold uppercase tracking-[0.4em]">All identity vectors successfully verified.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

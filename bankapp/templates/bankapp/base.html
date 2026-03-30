@@ -1,0 +1,683 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}PrairieWealth | Simple & Secure Banking{% endblock %}</title>
+    
+    <!-- SEO & Metadata -->
+    <meta name="description" content="PrairieWealth - Modern banking and secure wealth management for your future.">
+    
+    <!-- Typography: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 4 CDN -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    
+    <style>
+        :root {
+            --pw-dark: #050609;
+            --pw-alt: #080A0F;
+            --pw-card: rgba(10, 14, 23, 0.4);
+            --pw-card-heavy: rgba(10, 14, 23, 0.85);
+            --pw-border: rgba(255, 255, 255, 0.04);
+            --pw-border-glow: rgba(255, 255, 255, 0.08);
+            --pw-green: #00FF99;
+            --pw-green-glow: rgba(0, 255, 153, 0.15);
+            --pw-gold: #FFC107;
+            --pw-gold-glow: rgba(255, 193, 7, 0.15);
+            --pw-font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --pw-font-heading: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--pw-dark);
+            color: #F1F5F9;
+            font-family: var(--pw-font-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 153, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 193, 7, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 1) 0%, var(--pw-dark) 100%);
+            background-attachment: fixed;
+        }
+
+        /* 17ProMax Refractive Glassmorphism */
+        .glass-card {
+            background: var(--pw-card);
+            backdrop-filter: blur(28px) saturate(220%);
+            -webkit-backdrop-filter: blur(28px) saturate(220%);
+            border: 1px solid var(--pw-border);
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 
+                0 4px 24px -1px rgba(0, 0, 0, 0.3),
+                0 0 1px 0 rgba(255, 255, 255, 0.1) inset;
+            border-radius: 2rem;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .glass-card:hover {
+            border-color: var(--pw-border-glow);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 40px -4px rgba(0, 0, 0, 0.4),
+                0 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+        }
+
+        .text-gold { color: var(--pw-gold); }
+        .text-green { color: var(--pw-green); }
+        .bg-gold { background-color: var(--pw-gold); }
+        .bg-green { background-color: var(--pw-green); }
+        
+        /* Premium Typography */
+        h1, h2, h3, h4, .font-heading { 
+            font-family: var(--pw-font-heading);
+            letter-spacing: -0.03em;
+            font-weight: 800;
+        }
+
+        .nav-link {
+            position: relative;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--pw-green), transparent);
+            transition: width 0.4s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00FF99 0%, #00CC7A 100%);
+            color: #050609 !important;
+            box-shadow: 0 8px 32px var(--pw-green-glow);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            font-weight: 800;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 14px 48px rgba(0, 255, 153, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--pw-border-glow);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            border-radius: 1.25rem;
+        }
+
+        .btn-outline:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+
+        /* Deluxe Form Elements */
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
+            background: rgba(255, 255, 255, 0.02) !important;
+            border: 1px solid var(--pw-border) !important;
+            color: white !important;
+            border-radius: 1.25rem !important;
+            padding: 1.25rem 1.75rem !important;
+            font-size: 0.95rem !important;
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1) !important;
+            backdrop-filter: blur(4px);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none !important;
+            border-color: var(--pw-green) !important;
+            box-shadow: 0 0 30px var(--pw-green-glow) !important;
+            background: rgba(255, 255, 255, 0.04) !important;
+        }
+
+        /* Luxury Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--pw-dark); }
+        ::-webkit-scrollbar-thumb { 
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--pw-green); }
+
+        /* Visible Navigation Scrollbars (Special Tables) */
+        .scrollbar-visible::-webkit-scrollbar { height: 12px; }
+        .scrollbar-visible::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+        .scrollbar-visible::-webkit-scrollbar-thumb { background: rgba(34,197,94,0.3); border-radius: 10px; border: 3px solid #050609; }
+        .scrollbar-visible::-webkit-scrollbar-thumb:hover { background: rgba(34,197,94,0.5); }
+        .overflow-x-auto { scroll-behavior: smooth; border-bottom: 2px solid rgba(255,255,255,0.02); }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes modal-pop {
+            0% { transform: scale(0.97); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-pop {
+            animation: modal-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        /* Smooth Entrance */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'bankapp/logo.svg' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="text-white antialiased min-h-screen flex flex-col pt-32">
+    <!-- Luxury Navbar -->
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl z-50">
+        <div class="glass-card px-8 py-5 flex justify-between items-center bg-[#0d111a]/85 border-white/10">
+            <a href="{% url 'home' %}" class="flex items-center space-x-4 group">
+                <div class="relative w-12 h-12 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-green-500/20 blur-xl group-hover:bg-green-500/40 transition-all duration-700"></div>
+                    <div class="relative w-10 h-10 rounded-[1.2rem] glass-card border-white/20 flex items-center justify-center group-hover:rotate-12 transition-transform duration-500 bg-white/5 overflow-hidden p-1.5">
+                        <img src="{% static 'bankapp/logo.svg' %}" alt="Prairie Wealth Logo" class="w-full h-full object-contain">
+                    </div>
+                </div>
+                <span class="font-heading font-black text-2xl tracking-tighter text-white uppercase group-hover:text-green-400 transition-colors">
+                    Prairie<span class="text-green-500 italic font-light tracking-widest">Wealth</span>
+                </span>
+            </a>
+
+            <!-- Desktop Links -->
+            <div class="hidden lg:flex items-center space-x-10 font-heading font-semibold text-[9px] tracking-[0.2em] text-gray-500">
+                {% if user.is_staff %}
+                    <a href="{% url 'custom_admin' %}" class="nav-link hover:text-white uppercase transition-colors {% if request.resolver_match.url_name == 'custom_admin' %}active text-white{% endif %}">Admin Dashboard</a>
+                    <a href="{% url 'verification_queue' %}" class="nav-link hover:text-white uppercase transition-colors {% if request.resolver_match.url_name == 'verification_queue' %}active text-white{% endif %}">verification requests</a>
+                    <a href="{% url 'admin_credit_history' %}" class="nav-link hover:text-white uppercase transition-colors {% if request.resolver_match.url_name == 'admin_credit_history' %}active text-white{% endif %}">CreditHistory</a>
+                {% else %}
+                    <a href="{% url 'home' %}" class="nav-link hover:text-white uppercase">Home</a>
+                    <a href="{% url 'personal' %}" class="nav-link hover:text-white uppercase">Personal</a>
+                    <a href="{% url 'business' %}" class="nav-link hover:text-white uppercase">Business</a>
+                    <a href="{% url 'about' %}" class="nav-link hover:text-white uppercase">About</a>
+                {% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center space-x-6">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name != 'profile' %}hidden sm:flex{% else %}flex{% endif %} items-center space-x-3 group btn-outline px-5 py-2.5">
+                        <span class="text-[10px] font-black tracking-widest uppercase">My Bank</span>
+                        {% if user.userprofile.profile_picture %}
+                            <img src="{{ user.userprofile.profile_picture.url }}" class="w-7 h-7 rounded-full object-cover ring-2 ring-green-500/20">
+                        {% else %}
+                            <div class="w-7 h-7 rounded-full bg-gray-800 flex items-center justify-center text-[10px] font-black border border-white/10">{{ user.first_name|first }}</div>
+                        {% endif %}
+                    </a>
+                    <form action="{% url 'logout' %}" method="POST" class="hidden sm:block">
+                        {% csrf_token %}
+                        <button type="submit" class="text-[10px] font-black text-gray-500 hover:text-red-400 transition-colors uppercase tracking-widest">Exit</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="hidden sm:block text-xs font-bold text-gray-400 hover:text-white transition-colors tracking-widest uppercase">Sign In</a>
+                    <a href="{% url 'register' %}" class="btn-primary px-7 py-3 text-[10px] font-black shadow-lg uppercase tracking-widest">Get Started</a>
+                {% endif %}
+
+                <!-- Mobile Menu btn -->
+                <button id="mobile-menu-btn" class="lg:hidden text-white hover:text-green-400 transition-colors">
+                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Container -->
+        <div id="mobile-menu" class="hidden absolute top-28 left-0 w-full glass-card p-6 flex flex-col space-y-4 animate-pop border-white/10 !bg-[#0d111a]/95">
+            {% if user.is_staff %}
+                <a href="{% url 'custom_admin' %}" class="text-xs font-black uppercase tracking-widest py-4 border-b border-white/5">Admin Dashboard</a>
+                <a href="{% url 'verification_queue' %}" class="text-xs font-black uppercase tracking-widest py-4 border-b border-white/5">verification requests</a>
+                <a href="{% url 'admin_credit_history' %}" class="text-xs font-black uppercase tracking-widest py-4 border-b border-white/5">CreditHistory</a>
+            {% else %}
+                <a href="{% url 'home' %}" class="text-xs font-black uppercase tracking-widest py-4 border-b border-white/5">Home</a>
+                <a href="{% url 'personal' %}" class="text-xs font-black uppercase tracking-widest py-4 border-b border-white/5">Personal</a>
+                <a href="{% url 'business' %}" class="text-xs font-black uppercase tracking-widest py-4 border-b border-white/5">Business</a>
+                <a href="{% url 'about' %}" class="text-xs font-black uppercase tracking-widest py-4 border-b border-white/5">Our Company</a>
+            {% endif %}
+            
+            <div class="pt-4 flex flex-col space-y-3">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn-primary py-4 text-center text-[10px] font-black uppercase tracking-widest text-black">Dashboard</a>
+                    <form action="{% url 'logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full btn-outline py-4 text-[10px] font-black uppercase tracking-widest">Sign Out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn-outline py-4 text-center text-[10px] font-black uppercase tracking-widest">Sign In</a>
+                    <a href="{% url 'register' %}" class="btn-primary py-4 text-center text-[10px] font-black uppercase tracking-widest text-black">Get Started</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow pb-24 w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#05070A] border-t border-white/5 py-24 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-16">
+            <div>
+                <a href="{% url 'home' %}" class="flex items-center space-x-3 mb-8 group">
+                    <div class="w-10 h-10 rounded-xl glass-card bg-white/5 border-white/10 flex items-center justify-center group-hover:rotate-6 transition-transform overflow-hidden p-1.5">
+                        <img src="{% static 'bankapp/logo.svg' %}" alt="Prairie Wealth Logo" class="w-full h-full object-contain">
+                    </div>
+                    <span class="font-heading font-black text-xl tracking-tighter text-white uppercase group-hover:text-green-400 transition-colors">Prairie<span class="text-green-500 italic font-light tracking-widest">Wealth</span></span>
+                </a>
+                <p class="text-gray-500 text-sm leading-relaxed max-w-xs">Simple, secure, and smart banking for your financial future. We make money move easier.</p>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-heading font-bold mb-8 uppercase tracking-[0.2em] text-[10px]">What we do</h4>
+                <ul class="space-y-4 text-gray-500 text-[13px] font-medium">
+                    <li><a href="{% url 'personal' %}" class="hover:text-green-400 transition-colors">Personal Banking</a></li>
+                    <li><a href="{% url 'business' %}" class="hover:text-green-400 transition-colors">Business Accounts</a></li>
+                    <li><a href="{% url 'home' %}" class="hover:text-green-400 transition-colors">Smart Savings</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-heading font-bold mb-8 uppercase tracking-[0.2em] text-[10px]">Rules</h4>
+                <ul class="space-y-4 text-gray-500 text-[13px] font-medium">
+                    <li><a href="{% url 'privacy' %}" class="hover:text-green-400 transition-colors">Privacy</a></li>
+                    <li><a href="{% url 'terms' %}" class="hover:text-green-400 transition-colors">Terms</a></li>
+                    <li><a href="{% url 'security' %}" class="hover:text-green-400 transition-colors">Safety</a></li>
+                    <li><a href="{% url 'fdic' %}" class="hover:text-green-400 transition-colors">Bank Info</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-heading font-bold mb-8 uppercase tracking-[0.2em] text-[10px]">Help</h4>
+                <ul class="space-y-4 text-gray-500 text-[13px] font-medium">
+                    <li><a href="tel:1800PRAIRIE" class="hover:text-green-400 transition-colors">Call Us</a></li>
+                    <li><a href="mailto:support@prairiewealth.online" class="hover:text-green-400 transition-colors">Email Support</a></li>
+                    <li><a href="{% url 'contact' %}" class="hover:text-green-400 transition-colors">Contact Form</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 mt-24 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[11px] font-bold text-gray-600 uppercase tracking-widest">
+            <p>&copy; {% now "Y" %} PrairieWealth Inc.</p>
+            <p class="mt-6 md:mt-0 flex items-center space-x-4">
+                <span>Member FDIC</span>
+                <span class="w-1 h-1 rounded-full bg-gray-700"></span>
+                <span>Equal Housing Lender</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            var menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+        
+        // Reveal on scroll logic
+        const observerOptions = { threshold: 0.1 };
+        const observerColor = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach((el) => observerColor.observe(el));
+    </script>
+    
+    <!-- Live Chat Widget -->
+    {% if not user.is_staff %}
+    <div id="chatBadge" class="fixed right-6 bottom-24 w-7 h-7 bg-red-600 text-white rounded-full hidden border-4 border-[#05070A] z-[60] shadow-xl text-[10px] items-center justify-center font-black">0</div>
+    
+    <button id="chatToggle" class="fixed right-6 bottom-6 bg-green-500 hover:bg-green-400 text-black p-5 rounded-3xl shadow-[0_10px_30px_rgba(0,255,136,0.3)] z-50 transition-all duration-500 hover:-translate-y-2 hover:scale-110 active:scale-95">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+        </svg>
+    </button>
+
+    <div id="chatWindow" class="hidden fixed inset-0 sm:inset-auto sm:right-6 sm:bottom-28 w-full sm:w-[400px] h-full sm:h-[650px] sm:max-h-[calc(100vh-140px)] glass-card z-[100] flex-col overflow-hidden animate-pop !bg-[#0d111a]/98 !border-white/10">
+        
+        <!-- Chat Header -->
+        <div class="px-6 py-5 flex items-center justify-between border-b border-white/5 shrink-0 bg-white/5">
+            <div class="flex items-center space-x-4">
+                <div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_12px_rgba(0,255,136,0.8)] animate-pulse"></div>
+                <div>
+                    <h3 class="text-white font-heading font-black text-sm tracking-tight">Safe Chat</h3>
+                    <p class="text-[9px] text-gray-500 uppercase font-black tracking-[0.2em]">Encrypted Session</p>
+                </div>
+            </div>
+            <button id="chatClose" class="text-gray-500 hover:text-white transition-colors p-1">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Chat Body -->
+        <div id="chatBody" class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col scroll-smooth">
+            {% if not user.is_authenticated %}
+                <div class="flex flex-col items-center justify-center h-full text-center px-4">
+                    <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h4 class="font-heading font-bold text-lg text-white mb-2">Sign In Required</h4>
+                    <p class="text-gray-400 text-sm mb-6">Access secure priority support by authenticating your session.</p>
+                    <a href="{% url 'login' %}" class="btn-primary w-full py-3 rounded-xl text-sm font-bold">Sign In to Continue</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Chat Input -->
+        {% if user.is_authenticated %}
+        <div class="p-4 border-t border-white/10 shrink-0 bg-black/20">
+            <form id="chatClientForm" class="flex items-center gap-2">
+                {% csrf_token %}
+                <button type="button" onclick="document.getElementById('clientFileInput').click()" class="text-gray-400 hover:text-green-400 p-2 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                </button>
+                <input type="file" id="clientFileInput" name="attachment" class="hidden">
+                
+                <input type="text" id="chatInput" name="message" placeholder="Type a message..." autocomplete="off" class="flex-1 !bg-white/5 !border-none !rounded-xl !py-2.5 !px-4 text-sm">
+                
+                <button type="submit" class="bg-green-500 hover:bg-green-400 text-black p-2.5 rounded-xl transition-colors">
+                    <svg class="h-4 w-4 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Live Chat Logic overrides to use green logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const isAuthenticated = "{{ user.is_authenticated|yesno:'true,false' }}" === "true";
+            const isNotStaff = "{{ user.is_staff|yesno:'false,true' }}" === "true";
+
+            if (isNotStaff && isAuthenticated) {
+                const chatToggle = document.getElementById('chatToggle');
+                const chatClose = document.getElementById('chatClose');
+                const chatWindow = document.getElementById('chatWindow');
+                const chatBadge = document.getElementById('chatBadge');
+                
+                function scrollChat() {
+                    const chatBody = document.getElementById('chatBody');
+                    if(chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+                }
+
+                function loadChats(forceScroll = false) {
+                    const isOpen = !chatWindow.classList.contains('hidden');
+                    fetch("/api/get_chats/?mark_read=" + isOpen)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.unread_count > 0 && !isOpen) {
+                            chatBadge.classList.remove('hidden');
+                            chatBadge.innerText = data.unread_count > 9 ? '9+' : data.unread_count;
+                            chatBadge.classList.add('flex');
+                        } else {
+                            chatBadge.classList.add('hidden');
+                        }
+
+                        if (data.chats) {
+                            let html = `
+                                <div class="flex items-start mb-4">
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-black font-bold text-xs shrink-0 mt-1">PW</div>
+                                    <div class="ml-3 bg-white/5 border border-white/10 p-3 rounded-2xl rounded-tl-none text-sm text-gray-200">
+                                        Hello {{ user.first_name }}! How can we assist with your wealth management today?
+                                    </div>
+                                </div>`;
+                            
+                            data.chats.forEach(c => {
+                                let attHtml = c.attachment ? `<a href="${c.attachment}" target="_blank" class="block mt-2 text-xs text-green-400 hover:underline">📎 View Attachment</a>` : '';
+                                
+                                if (c.sender !== "{{ user.username }}") {
+                                    html += `
+                                    <div class="flex items-start mb-4">
+                                        <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-black font-bold text-xs shrink-0 mt-1">PW</div>
+                                        <div class="ml-3 max-w-[80%]">
+                                            <div class="bg-white/5 border border-white/10 p-3 rounded-2xl rounded-tl-none text-sm text-gray-200">${c.message}${attHtml}</div>
+                                            <div class="text-[10px] text-gray-500 mt-1 ml-1">${c.time}</div>
+                                        </div>
+                                    </div>`;
+                                } else {
+                                    html += `
+                                    <div class="flex items-start mb-4 justify-end">
+                                        <div class="mr-3 max-w-[80%] flex flex-col items-end">
+                                            <div class="bg-green-500 text-black p-3 rounded-2xl rounded-tr-none text-sm font-medium">${c.message}${attHtml}</div>
+                                            <div class="text-[10px] text-gray-500 mt-1 mr-1">${c.time} ${c.is_read ? '✓✓' : '✓'}</div>
+                                        </div>
+                                    </div>`;
+                                }
+                            });
+                            
+                            const chatBody = document.getElementById('chatBody');
+                            if(chatBody && chatBody.innerHTML !== html) {
+                                const isAtBottom = chatBody.scrollHeight - chatBody.scrollTop - chatBody.clientHeight < 50;
+                                chatBody.innerHTML = html;
+                                if(forceScroll || isAtBottom) setTimeout(scrollChat, 50);
+                            }
+                        }
+                    });
+                }
+
+                chatToggle.addEventListener('click', () => {
+                    chatWindow.classList.toggle('hidden');
+                    chatWindow.classList.toggle('flex');
+                    if(!chatWindow.classList.contains('hidden')) {
+                        chatBadge.classList.add('hidden');
+                        scrollChat();
+                        loadChats(true);
+                    }
+                });
+
+                chatClose.addEventListener('click', () => {
+                    chatWindow.classList.add('hidden');
+                    chatWindow.classList.remove('flex');
+                });
+
+                const chatForm = document.getElementById('chatClientForm');
+                if(chatForm) {
+                    chatForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        const formData = new FormData(chatForm);
+                        const chatInput = document.getElementById('chatInput');
+                        const fileInput = document.getElementById('clientFileInput');
+                        if(chatInput) chatInput.value = '';
+                        if(fileInput) fileInput.value = '';
+                        fetch('/api/send_chat/', { method: 'POST', body: formData })
+                        .then(() => loadChats(true));
+                    });
+                }
+
+                setInterval(loadChats, 3000);
+            }
+        });
+    </script>
+    <!-- Admin Universal Chat Modal -->
+    {% if user.is_staff %}
+    <div id="adminChatModal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-[#050609]/95 backdrop-blur-xl hidden">
+        <div class="glass-card rounded-[3rem] w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden border-white/10 shadow-2xl animate-pop relative">
+            <!-- Header -->
+            <div class="px-10 py-8 border-b border-white/5 bg-white/[0.02] flex items-center justify-between shrink-0">
+                <div class="flex items-center space-x-5">
+                    <div id="adminChatAvatar" class="w-12 h-12 rounded-2xl bg-black/60 border border-white/10 flex items-center justify-center text-white font-black shadow-inner overflow-hidden">
+                        <span id="adminChatInitial">?</span>
+                    </div>
+                    <div>
+                        <h3 id="adminChatName" class="text-2xl font-heading font-black text-white tracking-widest uppercase">Select User</h3>
+                        <p class="text-[9px] font-black text-green-500 uppercase tracking-[0.4em] mt-1.5 animate-pulse">Relay Terminal Active</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminChat()" class="text-gray-500 hover:text-white transition-all bg-white/5 p-3 rounded-2xl hover:rotate-90">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Chat Body -->
+            <div id="adminChatModalBody" class="flex-1 overflow-y-auto px-10 py-12 space-y-8 bg-[radial-gradient(circle_at_top_right,_rgba(34,197,94,0.02)_0%,_transparent_50%)] scroll-smooth min-h-0">
+                <!-- Messages populate here -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="px-10 py-10 border-t border-white/5 bg-black/40 shrink-0">
+                <form id="adminChatModalForm" class="flex items-end gap-5 max-w-5xl mx-auto">
+                    {% csrf_token %}
+                    <input type="hidden" id="adminChatTargetId" name="user_id">
+                    <div class="flex-1">
+                        <textarea id="adminChatModalInput" name="message" rows="1" placeholder="ENTER SECURE COMMAND..." class="w-full px-8 py-5 !bg-black/60 !border-white/5 !rounded-[1.8rem] resize-none overflow-hidden text-sm text-white font-black tracking-widest shadow-inner max-h-32" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'"></textarea>
+                    </div>
+                    <button type="submit" class="bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-black w-14 h-14 rounded-[1.5rem] flex items-center justify-center shadow-lg transition-all border border-green-500/20 active:scale-90 shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chatInterval = null;
+        let tableInterval = null;
+
+        function openAdminChat(userId, userName) {
+            document.getElementById('adminChatTargetId').value = userId;
+            document.getElementById('adminChatName').innerText = userName;
+            document.getElementById('adminChatInitial').innerText = userName.charAt(0).toUpperCase();
+            document.getElementById('adminChatModal').classList.remove('hidden');
+            loadAdminModalChats(userId);
+            if(chatInterval) clearInterval(chatInterval);
+            chatInterval = setInterval(() => loadAdminModalChats(userId), 3000);
+        }
+
+        function closeAdminChat() {
+            document.getElementById('adminChatModal').classList.add('hidden');
+            if(chatInterval) clearInterval(chatInterval);
+        }
+
+        function loadAdminModalChats(userId) {
+            fetch(`/api/get_chats/?user_id=${userId}&mark_read=true`)
+            .then(r => r.json())
+            .then(data => {
+                const body = document.getElementById('adminChatModalBody');
+                let html = '';
+                data.chats.forEach(c => {
+                    const isOther = !c.is_admin;
+                    html += `
+                    <div class="flex ${isOther ? 'justify-start' : 'justify-end'} animate-pop">
+                        <div class="max-w-[80%]">
+                            <div class="${isOther ? 'bg-white/5 border-white/10' : 'bg-green-500/5 border-green-500/20 text-green-50'} border rounded-[2rem] px-6 py-5 text-[13px] font-bold">
+                                ${c.message}
+                            </div>
+                            <span class="text-[8px] font-black text-gray-700 mt-2 block ${isOther ? 'ml-4' : 'mr-4 text-right'} uppercase tracking-[0.4em]">${c.time}</span>
+                        </div>
+                    </div>`;
+                });
+                if(body.innerHTML !== html) {
+                    const isAtBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 100;
+                    body.innerHTML = html;
+                    if(isAtBottom) body.scrollTop = body.scrollHeight;
+                }
+            });
+        }
+
+        // Auto-refresh the main dashboard message table if it exists
+        function refreshRecentMessagesTable() {
+            const tableBody = document.getElementById('recentMessagesTableBody');
+            if (!tableBody) return;
+
+            fetch('/management/api/recent-messages/')
+            .then(r => r.json())
+            .then(data => {
+                let html = '';
+                data.conversations.forEach(conv => {
+                    html += `
+                    <tr class="hover:bg-white/[0.03] transition-all group">
+                        <td class="px-8 py-8">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center text-white font-black shadow-inner overflow-hidden uppercase">
+                                    ${conv.profile_pic ? `<img src="${conv.profile_pic}" class="w-full h-full object-cover">` : conv.initials}
+                                </div>
+                                <div class="ml-5">
+                                    <div class="text-[13px] font-black text-white tracking-wide uppercase">${conv.username}</div>
+                                    <div class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-1">${conv.email}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-8">
+                            <div class="max-w-xs truncate text-[11px] font-bold text-white/50 group-hover:text-green-400/70 transition-colors uppercase tracking-widest italic">
+                                "${conv.last_msg}"
+                            </div>
+                        </td>
+                        <td class="px-8 py-8">
+                            <div class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">${conv.time}</div>
+                        </td>
+                        <td class="px-8 py-8 text-right">
+                            <button onclick="openAdminChat('${conv.user_id}', '${conv.username}')" class="relative group/btn">
+                                <div class="bg-green-500/10 hover:bg-green-500 border border-green-500/20 hover:border-green-500 text-green-400 hover:text-black px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all shadow-lg active:scale-95 flex items-center space-x-2">
+                                    <span>RESPOND</span>
+                                    <svg class="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                </div>
+                            </button>
+                        </td>
+                    </tr>`;
+                });
+                if(tableBody.innerHTML !== html) tableBody.innerHTML = html;
+            });
+        }
+
+        if (document.getElementById('recentMessagesTableBody')) {
+            tableInterval = setInterval(refreshRecentMessagesTable, 5000);
+        }
+
+        document.getElementById('adminChatModalForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const input = document.getElementById('adminChatModalInput');
+            const userId = document.getElementById('adminChatTargetId').value;
+            fetch('/api/send_chat/', { method: 'POST', body: formData })
+            .then(() => {
+                input.value = '';
+                input.style.height = 'auto';
+                loadAdminModalChats(userId);
+                refreshRecentMessagesTable();
+            });
+        });
+    </script>
+    {% endif %}
+</body>
+</html>
