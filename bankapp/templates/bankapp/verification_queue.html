@@ -24,7 +24,7 @@
             <div class="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <span class="text-5xl font-heading font-black text-gold mr-5 relative z-10">{{ pending_users.count }}</span>
             <div class="relative z-10">
-                <p class="text-[9px] font-black uppercase tracking-[0.3em] text-gold/60 leading-tight">Signals<br>Pending</p>
+                <p class="text-[9px] font-black uppercase tracking-[0.3em] text-gold/60 leading-tight">Requests<br>Pending</p>
                 <div class="w-full h-[1px] bg-gold/20 mt-2"></div>
             </div>
         </div>
@@ -70,14 +70,14 @@
                         <td class="px-8 py-8">
                             <a href="{% url 'verification_detail' p.user.id %}" class="inline-flex items-center px-6 py-3 bg-white/5 hover:bg-gold border border-white/10 hover:border-gold text-gray-400 hover:text-black rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all shadow-lg group-hover:scale-105">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                SUBJECT DOSSIER
+                                View Details
                             </a>
                         </td>
                         <td class="px-8 py-8 text-right">
                             <div class="flex items-center justify-end space-x-3">
                                 <form action="{% url 'approve_verification' p.user.id %}" method="POST" class="inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="bg-green-500/10 hover:bg-green-500 border border-green-500/20 hover:border-green-500 text-green-400 hover:text-black px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all shadow-lg active:scale-95">
+                                    <button type="submit" class="bg-green-500/10 hover:bg-green-500 border border-green-500/20 hover:border-green-500 text-green-400 hover:text-black px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all shadow-lg active:scale-95" disabled>
                                         APPROVE
                                     </button>
                                 </form>
