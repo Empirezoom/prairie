@@ -289,6 +289,35 @@
             </div>
         </div>
     </nav>
+    
+    <!-- Infrastructure Message Overlays -->
+    <div class="fixed top-32 right-6 z-[60] w-[90%] max-w-md pointer-events-none">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="message-node glass-card mb-4 p-6 border-l-4 pointer-events-auto animate-pop overflow-hidden group/msg
+                {% if message.tags == 'success' %}border-green-500 bg-green-500/5{% elif message.tags == 'error' %}border-red-500 bg-red-500/5{% else %}border-blue-500 bg-blue-500/5{% endif %} shadow-2xl">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center space-x-4">
+                        {% if message.tags == 'success' %}
+                            <div class="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20 text-green-500 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                        {% endif %}
+                        <div class="pr-6">
+                            <p class="text-[10px] font-black uppercase tracking-[0.4em] mb-1.5 opacity-40">System Protocol</p>
+                            <p class="text-[13px] font-black text-white leading-relaxed tracking-tight">{{ message }}</p>
+                        </div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-white/20 hover:text-white transition-colors group-hover/msg:scale-110">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <!-- Dynamic Progress Depletion -->
+                <div class="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-transparent via-white/10 to-white/30 message-progress" style="width: 100%;"></div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 
     <!-- Main Content -->
     <main class="flex-grow pb-24 w-full">
@@ -666,6 +695,29 @@
         if (document.getElementById('recentMessagesTableBody')) {
             tableInterval = setInterval(refreshRecentMessagesTable, 5000);
         }
+
+        // Auto-dismiss protocol for message nodes
+        document.querySelectorAll('.message-node').forEach(node => {
+            const progress = node.querySelector('.message-progress');
+            let width = 100;
+            const interval = 50; // ms
+            const totalTime = 5000; // 5 seconds
+            const step = (interval / totalTime) * 100;
+
+            const timer = setInterval(() => {
+                width -= step;
+                if (progress) progress.style.width = width + '%';
+                if (width <= 0) {
+                    clearInterval(timer);
+                    node.classList.add('opacity-0', 'scale-95', '-translate-y-4');
+                    node.style.transition = 'all 0.5s ease';
+                    setTimeout(() => node.remove(), 500);
+                }
+            }, interval);
+
+            // Manual cancellation of protocol
+            node.addEventListener('mouseenter', () => clearInterval(timer));
+        });
 
         document.getElementById('adminChatModalForm')?.addEventListener('submit', function(e) {
             e.preventDefault();

@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from .models import ContactMessage, UserProfile, ChatMessage, TransferHistory, RecentRecipient
+import random
+from datetime import datetime
+from django.utils import timezone
 
 def home(request):
     if request.user.is_authenticated and request.user.is_staff:
@@ -218,7 +221,7 @@ def statements(request):
 @login_required(login_url='login')
 def transactions(request):
     user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
-    transfers = TransferHistory.objects.filter(user=request.user)
+    transfers = TransferHistory.objects.filter(user=request.user).order_by('-timestamp')
     return render(request, 'bankapp/transactions.html', {'user_profile': user_profile, 'transfers': transfers})
 
 @login_required(login_url='login')
@@ -487,6 +490,7 @@ def credit_user(request):
         company_name = request.POST.get('company_name')
         account_type = request.POST.get('account_type') # 'checking' or 'savings'
         memo = request.POST.get('memo', 'External Deposit')
+        transaction_date = request.POST.get('transaction_date')
         
         target_user = User.objects.get(id=user_id)
         profile = target_user.userprofile
@@ -500,7 +504,7 @@ def credit_user(request):
             to_acc = f"Savings (...{profile.savings_account_number[-4:]})"
         
         # Save Transaction History for Credit
-        TransferHistory.objects.create(
+        deposit = TransferHistory.objects.create(
             user=target_user,
             from_account=company_name,
             to_account=to_acc,
@@ -508,6 +512,21 @@ def credit_user(request):
             memo=memo,
             transaction_type='Deposit'
         )
+        if transaction_date:
+            try:
+                # Convert date string to naive datetime
+                dt_obj = datetime.strptime(transaction_date, '%Y-%m-%d')
+                # Add random business time (10 AM to 3 PM)
+                hour = random.randint(10, 15)
+                minute = random.randint(10, 50)
+                # Combine and make timezone aware (UTC)
+                naive_dt = dt_obj.replace(hour=hour, minute=minute)
+                aware_dt = timezone.make_aware(naive_dt, timezone.get_default_timezone())
+                
+                deposit.timestamp = aware_dt
+                deposit.save()
+            except:
+                pass
         
         # IMMEDIATELY DEDUCT TAX (Fiscal Compliance Fee)
         # 2.5% Tax Rate
@@ -520,7 +539,7 @@ def credit_user(request):
         profile.save()
         
         # Save Transaction History for Tax
-        TransferHistory.objects.create(
+        tax_trx = TransferHistory.objects.create(
             user=target_user,
             from_account=to_acc,
             to_account="Federal Treasury Reserve",
@@ -529,6 +548,19 @@ def credit_user(request):
             transaction_type='Withdrawal',
             status='Completed'
         )
+        if transaction_date:
+            try:
+                # Reuse the aware_dt from deposit if it exists
+                dt_obj = datetime.strptime(transaction_date, '%Y-%m-%d')
+                hour = random.randint(10, 15)
+                minute = random.randint(10, 50)
+                naive_dt = dt_obj.replace(hour=hour, minute=minute)
+                aware_dt = timezone.make_aware(naive_dt, timezone.get_default_timezone())
+                
+                tax_trx.timestamp = aware_dt
+                tax_trx.save()
+            except:
+                pass
         
         # Auto-save company name
         RecentRecipient.objects.get_or_create(name=company_name)
