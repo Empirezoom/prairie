@@ -206,14 +206,14 @@
     <!-- Luxury Navbar -->
     <nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl z-50">
         <div class="glass-card px-8 py-5 flex justify-between items-center bg-[#0d111a]/85 border-white/10">
-            <a href="{% url 'home' %}" class="flex items-center space-x-4 group">
-                <div class="relative w-12 h-12 flex items-center justify-center">
+            <a href="{% url 'home' %}" class="flex items-center space-x-2 sm:space-x-4 group shrink-0">
+                <div class="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center">
                     <div class="absolute inset-0 bg-green-500/20 blur-xl group-hover:bg-green-500/40 transition-all duration-700"></div>
-                    <div class="relative w-10 h-10 rounded-[1.2rem] glass-card border-white/20 flex items-center justify-center group-hover:rotate-12 transition-transform duration-500 bg-white/5 overflow-hidden p-1.5">
+                    <div class="relative w-8 h-8 sm:w-10 sm:h-10 rounded-[1rem] sm:rounded-[1.2rem] glass-card border-white/20 flex items-center justify-center group-hover:rotate-12 transition-transform duration-500 bg-white/5 overflow-hidden p-1 sm:p-1.5">
                         <img src="{% static 'bankapp/logo.svg' %}" alt="Prairie Wealth Logo" class="w-full h-full object-contain">
                     </div>
                 </div>
-                <span class="font-heading font-black text-2xl tracking-tighter text-white uppercase group-hover:text-green-400 transition-colors">
+                <span class="font-heading font-black text-lg sm:text-2xl tracking-tighter text-white uppercase group-hover:text-green-400 transition-colors truncate">
                     Prairie<span class="text-green-500 italic font-light tracking-widest">Wealth</span>
                 </span>
             </a>
@@ -248,8 +248,11 @@
                         <button type="submit" class="text-[10px] font-black text-gray-500 hover:text-red-400 transition-colors uppercase tracking-widest">Exit</button>
                     </form>
                 {% else %}
-                    <a href="{% url 'login' %}" class="hidden sm:block text-xs font-bold text-gray-400 hover:text-white transition-colors tracking-widest uppercase">Sign In</a>
-                    <a href="{% url 'register' %}" class="btn-primary px-7 py-3 text-[10px] font-black shadow-lg uppercase tracking-widest">Get Started</a>
+                    <a href="{% url 'login' %}" class="hidden md:block text-xs font-bold text-gray-400 hover:text-white transition-colors tracking-widest uppercase">Sign In</a>
+                    <a href="{% url 'register' %}" class="btn-primary px-4 sm:px-7 py-3 text-[9px] sm:text-[10px] font-black shadow-lg uppercase tracking-widest flex items-center space-x-2">
+                        <span class="hidden sm:inline">Get Started</span>
+                        <svg class="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                    </a>
                 {% endif %}
 
                 <!-- Mobile Menu btn -->
