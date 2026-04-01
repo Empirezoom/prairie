@@ -1,7 +1,4 @@
 django
-gunicorn
 whitenoise
-psycopg2-binary
 Pillow
 python-decouple
-dj-database-url

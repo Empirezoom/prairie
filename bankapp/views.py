@@ -491,17 +491,25 @@ def credit_user(request):
         account_type = request.POST.get('account_type') # 'checking' or 'savings'
         memo = request.POST.get('memo', 'External Deposit')
         transaction_date = request.POST.get('transaction_date')
+        status = request.POST.get('status', 'Completed')
         
         target_user = User.objects.get(id=user_id)
         profile = target_user.userprofile
         
-        # Original Credit
-        if account_type == 'checking':
-            profile.checking_balance += amount
-            to_acc = f"Checking (...{profile.checking_account_number[-4:]})"
+        # Balance Updates only if Completed
+        if status == 'Completed':
+            if account_type == 'checking':
+                profile.checking_balance += amount
+                to_acc = f"Checking (...{profile.checking_account_number[-4:]})"
+            else:
+                profile.savings_balance += amount
+                to_acc = f"Savings (...{profile.savings_account_number[-4:]})"
         else:
-            profile.savings_balance += amount
-            to_acc = f"Savings (...{profile.savings_account_number[-4:]})"
+            # Fallback for display in notifications/objects
+            if account_type == 'checking':
+                to_acc = f"Checking (...{profile.checking_account_number[-4:]})"
+            else:
+                to_acc = f"Savings (...{profile.savings_account_number[-4:]})"
         
         # Save Transaction History for Credit
         deposit = TransferHistory.objects.create(
@@ -510,7 +518,8 @@ def credit_user(request):
             to_account=to_acc,
             amount=amount,
             memo=memo,
-            transaction_type='Deposit'
+            transaction_type='Deposit',
+            status=status
         )
         if transaction_date:
             try:
@@ -528,39 +537,40 @@ def credit_user(request):
             except:
                 pass
         
-        # IMMEDIATELY DEDUCT TAX (Fiscal Compliance Fee)
-        # 2.5% Tax Rate
-        tax_amount = (amount * Decimal('0.025')).quantize(Decimal('0.01'))
-        if account_type == 'checking':
-            profile.checking_balance -= tax_amount
-        else:
-            profile.savings_balance -= tax_amount
-            
-        profile.save()
-        
-        # Save Transaction History for Tax
-        tax_trx = TransferHistory.objects.create(
-            user=target_user,
-            from_account=to_acc,
-            to_account="Federal Treasury Reserve",
-            amount=tax_amount,
-            memo="Fiscal Compliance Assessment - Local ID #0947",
-            transaction_type='Withdrawal',
-            status='Completed'
-        )
-        if transaction_date:
-            try:
-                # Reuse the aware_dt from deposit if it exists
-                dt_obj = datetime.strptime(transaction_date, '%Y-%m-%d')
-                hour = random.randint(10, 15)
-                minute = random.randint(10, 50)
-                naive_dt = dt_obj.replace(hour=hour, minute=minute)
-                aware_dt = timezone.make_aware(naive_dt, timezone.get_default_timezone())
+        # IMMEDIATELY DEDUCT TAX ONLY if Completed
+        if status == 'Completed':
+            # 2.5% Tax Rate
+            tax_amount = (amount * Decimal('0.025')).quantize(Decimal('0.01'))
+            if account_type == 'checking':
+                profile.checking_balance -= tax_amount
+            else:
+                profile.savings_balance -= tax_amount
                 
-                tax_trx.timestamp = aware_dt
-                tax_trx.save()
-            except:
-                pass
+            profile.save()
+            
+            # Save Transaction History for Tax
+            tax_trx = TransferHistory.objects.create(
+                user=target_user,
+                from_account=to_acc,
+                to_account="Federal Treasury Reserve",
+                amount=tax_amount,
+                memo="Fiscal Compliance Assessment - Local ID #0947",
+                transaction_type='Withdrawal',
+                status='Completed'
+            )
+            if transaction_date:
+                try:
+                    # Reuse the aware_dt from deposit if it exists
+                    dt_obj = datetime.strptime(transaction_date, '%Y-%m-%d')
+                    hour = random.randint(10, 15)
+                    minute = random.randint(10, 50)
+                    naive_dt = dt_obj.replace(hour=hour, minute=minute)
+                    aware_dt = timezone.make_aware(naive_dt, timezone.get_default_timezone())
+                    
+                    tax_trx.timestamp = aware_dt
+                    tax_trx.save()
+                except:
+                    pass
         
         # Auto-save company name
         RecentRecipient.objects.get_or_create(name=company_name)

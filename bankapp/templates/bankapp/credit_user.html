@@ -107,9 +107,24 @@
                         </div>
                     </div>
 
-                    <div class="space-y-6">
-                        <label class="block text-[11px] font-black text-green-500/80 uppercase tracking-[0.5em] ml-1">Protocol Memo (Optional)</label>
-                        <input type="text" name="memo" placeholder="SPECIFY PURPOSE..." class="w-full bg-[#05070a] border-2 border-white/20 rounded-[1.5rem] px-10 py-6 text-white font-black text-sm uppercase tracking-[0.2em] outline-none focus:border-green-500 transition-all shadow-2xl placeholder-gray-800 ring-1 ring-white/5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div class="space-y-6">
+                            <label class="block text-[11px] font-black text-green-500/80 uppercase tracking-[0.5em] ml-1">Execution Status</label>
+                            <div class="relative">
+                                <select name="status" required class="w-full bg-[#05070a] border-2 border-white/20 rounded-[1.5rem] px-10 py-6 text-white font-black text-sm uppercase tracking-[0.3em] outline-none focus:border-green-500 transition-all shadow-2xl appearance-none cursor-pointer ring-1 ring-white/5">
+                                    <option value="Completed">Successful / Completed</option>
+                                    <option value="Pending">Pending (Holds Balance)</option>
+                                    <option value="Failed">Failed (Audit Only)</option>
+                                </select>
+                                <div class="absolute right-10 top-1/2 -translate-y-1/2 pointer-events-none text-green-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <label class="block text-[11px] font-black text-green-500/80 uppercase tracking-[0.5em] ml-1">Protocol Memo (Optional)</label>
+                            <input type="text" name="memo" placeholder="SPECIFY PURPOSE..." class="w-full bg-[#05070a] border-2 border-white/20 rounded-[1.5rem] px-10 py-6 text-white font-black text-sm uppercase tracking-[0.2em] outline-none focus:border-green-500 transition-all shadow-2xl placeholder-gray-800 ring-1 ring-white/5">
+                        </div>
                     </div>
 
                     <div class="pt-10 border-t border-white/5">

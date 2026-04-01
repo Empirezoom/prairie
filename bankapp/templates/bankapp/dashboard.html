@@ -164,7 +164,15 @@
                                     <p class="text-lg sm:text-xl font-heading font-black tracking-tighter {% if t.transaction_type == 'Deposit' %}text-green-400{% else %}text-white{% endif %}">
                                         {% if t.transaction_type == 'Deposit' %}+{% else %}-{% endif %}${{ t.amount|floatformat:2 }}
                                     </p>
-                                    <span class="px-2 py-0.5 rounded-md bg-white/[0.05] text-[8px] font-black uppercase tracking-widest text-gray-500 mt-1 inline-block border border-white/5">{{ t.status }}</span>
+                                    <div class="inline-flex items-center space-x-1.5 mt-2">
+                                        <span class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border
+                                            {% if t.status == 'Completed' or t.status == 'Successful' %}bg-green-500/10 text-green-400 border-green-500/20
+                                            {% elif t.status == 'Pending' %}bg-amber-500/10 text-amber-500 border-amber-500/20 animate-pulse
+                                            {% elif t.status == 'Failed' %}bg-red-500/10 text-red-500 border-red-500/20
+                                            {% else %}bg-white/5 text-gray-500 border-white/10{% endif %}">
+                                            {{ t.status }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             {% endfor %}
